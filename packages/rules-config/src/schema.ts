@@ -32,6 +32,10 @@ export const RoundScheduleSchema = z.object({
 export const DisclosureSchema = z.object({
   /** e.g. "CA-BP-17539.1" */
   templateKey: z.string(),
+  /** two-letter state the disclosure applies to; rendered only when that state is eligible */
+  jurisdiction: z.string().length(2),
+  /** internal, never rendered */
+  note: z.string().optional(),
   maxRounds: z.number().int(),
   maxCostCents: z.number().int(),
   laterRoundsHarder: z.boolean(),
@@ -59,6 +63,8 @@ export const RulesetConfigSchema = z.object({
   disputeWindowHours: z.number().int().positive().default(72),
   refundSlaDays: z.number().int().positive().default(30),
   firstAccessHours: z.number().int().nonnegative().default(72),
+  certificationDays: z.number().int().positive().optional(),
+  closingDays: z.number().int().positive().optional(),
   retention: z.object({
     scoresKeysCertificationsYears: z.number().default(7),
     proctoringMediaMonthsPostClosing: z.number().default(12),

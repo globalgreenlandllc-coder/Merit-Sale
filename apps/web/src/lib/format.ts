@@ -47,3 +47,13 @@ export function safeJson<T>(s: string | null | undefined, fallback: T): T {
   if (!s) return fallback;
   try { return JSON.parse(s) as T; } catch { return fallback; }
 }
+
+const CERT_LABEL: Record<string, string> = { lock: 'Rules lock', r1_pass_list: 'Round 1 pass list', r2_advancement: 'Round 2 advancement', r3_advancement: 'Round 3 advancement', winner: 'Certified result', cancellation: 'Cancellation', release: 'Package release' };
+/** Public label for a certification type; the enum value itself never reaches a page. */
+export function certLabel(type: string): string {
+  return CERT_LABEL[type] ?? type.replace(/_/g, ' ').replace(/^./, (c) => c.toUpperCase());
+}
+export function fmtDocket(d: Date | string | null | undefined): string {
+  if (!d) return '—';
+  return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Los_Angeles', timeZoneName: 'short' });
+}

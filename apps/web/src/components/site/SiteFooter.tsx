@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { Container } from '@/components/ui/Container';
 import { Wordmark } from './Wordmark';
+import { Placeholder } from '@/components/ui/Placeholder';
+import { site } from '@/lib/site';
 
 const cols = [
   { title: 'The record', links: [['/registry', 'Hash registry'], ['/audit', 'Public audit summaries'], ['/opens', 'Merit Opens'], ['/practice', 'Practice problems']] },
@@ -19,9 +21,9 @@ export function SiteFooter() {
               A merit sale is a way of selling a home where the buyer is chosen by objective skill instead of by price or by luck. One registration. One test. The highest score takes the keys.
             </p>
             <dl className="mt-8 space-y-1.5 text-[13px] text-sage">
-              <div><span className="plate-dark mr-2">Entity</span><span className="rounded-xs bg-paper/10 px-1 font-mono text-[12px] text-brass-3">[Legal entity name]</span></div>
-              <div><span className="plate-dark mr-2">Address</span><span className="rounded-xs bg-paper/10 px-1 font-mono text-[12px] text-brass-3">[Physical address]</span></div>
-              <div><span className="plate-dark mr-2">Registration</span><span className="rounded-xs bg-paper/10 px-1 font-mono text-[12px] text-brass-3">[State registration number]</span></div>
+              <div><span className="plate-dark mr-2">Entity</span><Placeholder dark>{site.legalEntity}</Placeholder></div>
+              <div><span className="plate-dark mr-2">Address</span><Placeholder dark>{site.physicalAddress}</Placeholder></div>
+              <div><span className="plate-dark mr-2">Registration</span><Placeholder dark>{site.stateRegistrationNumber}</Placeholder></div>
             </dl>
           </div>
           {cols.map((c) => (
@@ -36,8 +38,8 @@ export function SiteFooter() {
           ))}
         </div>
         <div className="mt-14 border-t hair-light pt-6 text-[12.5px] leading-relaxed text-sage">
-          <p>This is a skill-based merit selection event. No chance element is used. Void where prohibited. Registration is open only to residents of the eligible states listed on each Merit Open page.</p>
-          <p className="mt-2">Every factual claim on this site links to something checkable. Bracketed values are placeholders pending counsel sign-off and are rendered from configuration, not code.</p>
+          <p>{site.disclosureLine}</p>
+          <p className="mt-2">{site.claimsLine}</p>
         </div>
       </Container>
     </footer>

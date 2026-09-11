@@ -3,12 +3,14 @@
  * currentColor, so it draws in ink on parchment and in brass on ink. Groups draw on
  * in sequence via stroke-dashoffset (disabled under prefers-reduced-motion).
  */
-export function FloorPlan({ className = '', animate = true, labels = true }: { className?: string; animate?: boolean; labels?: boolean }) {
+export function FloorPlan({ className = '', animate = true, labels = true, decorative = false }: { className?: string; animate?: boolean; labels?: boolean; decorative?: boolean }) {
   const g = (delay: number) => (animate ? { className: 'animate-draw', style: { animationDelay: `${delay}s` }, pathLength: 1, strokeDasharray: 1, strokeDashoffset: 1 } : {});
-  const lbl = 'font-mono text-[8.5px] uppercase tracking-[0.2em] fill-current';
-  const dim = 'font-mono text-[7.5px] tracking-[0.12em] fill-current';
+  const lbl = 'font-mono text-[9px] uppercase tracking-[0.2em] fill-current';
+  const dim = 'font-mono text-[9px] tracking-[0.12em] fill-current';
+  const a11y = decorative ? { 'aria-hidden': true as const } : { role: 'img' as const, 'aria-labelledby': 'fp-title', 'aria-describedby': 'fp-desc' };
   return (
-    <svg viewBox="0 0 720 540" className={className} fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" role="img" aria-label="Floor plan of the residence">
+    <svg viewBox="0 0 720 540" className={className} fill="none" stroke="currentColor" strokeLinecap="square" strokeLinejoin="miter" {...a11y}>
+      {!decorative && <><title id="fp-title">Main-level plan</title><desc id="fp-desc">Schematic from builder plans, not to scale. Great room 26 by 20 feet with a fireplace, kitchen 14 by 20 feet with an island, entry, primary suite 18 by 15 feet, bath, study, bedroom 2 at 15 by 15 feet, and a covered terrace. Overall 48 by 42 feet.</desc></>}
       {/* exterior walls */}
       <g strokeWidth="2" {...g(0)}>
         <path d="M40 60 H520 V300 H680 V480 H40 Z" />
@@ -52,8 +54,8 @@ export function FloorPlan({ className = '', animate = true, labels = true }: { c
         <path d="M320 60 V160 H340 V60" />
         <path d="M440 60 V300 H520" opacity="0.5" />
         <circle cx="350" cy="100" r="6" /><circle cx="350" cy="130" r="6" />
-        {/* stair */}
-        <path d="M460 70 H510 M460 80 H510 M460 90 H510 M460 100 H510 M460 110 H510 M460 120 H510" />
+        {/* pantry */}
+        <path d="M460 70 H510 V120 H460 Z" /><path d="M470 80 H500 M470 95 H500 M470 110 H500" opacity="0.5" />
         {/* bath */}
         <rect x="270" y="312" width="24" height="34" rx="6" />
         <circle cx="318" cy="325" r="7" />
@@ -71,7 +73,7 @@ export function FloorPlan({ className = '', animate = true, labels = true }: { c
         <rect x="150" y="60" width="40" height="10" />
       </g>
       {/* dimensions */}
-      <g strokeWidth="0.6" opacity="0.5" {...g(2.3)}>
+      <g strokeWidth="0.6" opacity="0.85" {...g(2.3)}>
         <path d="M40 34 H520 M40 28 V40 M520 28 V40" />
         <path d="M706 300 V480 M700 300 H712 M700 480 H712" />
         <path d="M14 60 V480 M8 60 H20 M8 480 H20" />
@@ -85,16 +87,16 @@ export function FloorPlan({ className = '', animate = true, labels = true }: { c
       {labels && (
         <g stroke="none" opacity="0.85">
           <text x="170" y="185" textAnchor="middle" className={lbl}>Great room</text>
-          <text x="170" y="198" textAnchor="middle" className={dim} opacity="0.6">26′ × 20′</text>
+          <text x="170" y="200" textAnchor="middle" className={dim} opacity="0.85">26′ × 20′</text>
           <text x="370" y="182" textAnchor="middle" className={lbl}>Kitchen</text>
-          <text x="370" y="195" textAnchor="middle" className={dim} opacity="0.6">14′ × 20′</text>
-          <text x="470" y="200" textAnchor="middle" className={lbl} opacity="0.6">Entry</text>
+          <text x="370" y="197" textAnchor="middle" className={dim} opacity="0.85">14′ × 20′</text>
+          <text x="470" y="200" textAnchor="middle" className={lbl} opacity="0.85">Entry</text><text x="485" y="140" textAnchor="middle" className={lbl} opacity="0.85">Pantry</text>
           <text x="150" y="332" textAnchor="middle" className={lbl}>Primary suite</text>
-          <text x="150" y="345" textAnchor="middle" className={dim} opacity="0.6">18′ × 15′</text>
+          <text x="150" y="347" textAnchor="middle" className={dim} opacity="0.85">18′ × 15′</text>
           <text x="300" y="336" textAnchor="middle" className={lbl} opacity="0.7">Bath</text>
           <text x="300" y="462" textAnchor="middle" className={lbl} opacity="0.7">Study</text>
           <text x="430" y="418" textAnchor="middle" className={lbl}>Bedroom 2</text>
-          <text x="430" y="431" textAnchor="middle" className={dim} opacity="0.6">15′ × 15′</text>
+          <text x="430" y="433" textAnchor="middle" className={dim} opacity="0.85">15′ × 15′</text>
           <text x="600" y="392" textAnchor="middle" className={lbl} opacity="0.7">Terrace</text>
           <text x="280" y="24" textAnchor="middle" className={dim}>48′-0″</text>
           <text x="693" y="395" textAnchor="middle" className={dim} transform="rotate(-90 693 395)">18′-0″</text>

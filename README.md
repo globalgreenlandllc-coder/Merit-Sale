@@ -78,6 +78,14 @@ Real: the data model, state machine, lock ceremony (AES-256-GCM under the Admini
 
 Adapters with mock implementations until keys exist: payments (Stripe Checkout with custodian settlement is implemented behind `PAYMENTS_PROVIDER=stripe`), identity verification, sanctions, proctoring, transactional email. Sessions use a signed-cookie local provider; swap `src/lib/auth/session.ts` for your identity provider and enforce MFA there for staff roles.
 
+## The listing page
+
+Each Merit Open is presented as a monograph of record rather than a portal listing: a folio strip with the listing number and rules hash, a cover plate with a plate viewer (photographs when approved; until then the architect's plate set: floor plan, site plan, elevation, vicinity map, all labelled schematic and not to scale), a title block with the facts strip, and a docket rail with the fixed facts and the one action. Numbered sections follow: overview, fact sheet with provenance chips on every record fact, location, cost to hold, title abstract and record, verify everything, how it works, eligibility and schedule, disclosures, questions.
+
+- **Maps** use Leaflet with keyless Esri street tiles (satellite toggle, OpenStreetMap fallback) tinted into the palette, a region inset, half-mile and one-mile rings, straight-line distances to seeded anchors, directions links, and a measure-from-a-point tool that never asks for the visitor's location. Catalogue cards and the home page use a static, no-JavaScript tile thumbnail. Before launch traffic, move to a licensed or proxied tile source and keep attribution visible in every variant.
+- **Photography** is uploaded by the platform admin on the property page (`/admin/properties/<id>`), stored under `UPLOADS_DIR` (default `apps/web/uploads/`, ignored by git, served by `/api/uploads`), hashed on upload, and shown only once marked published after counsel approval. Published photographs lead the plate viewer; the plate set never disappears behind them.
+- **Smart tools**, all client-side and key-free: state eligibility preview, timezone-aware schedule with `.ics` export, in-browser SHA-256 verifier for released packages against every published hash, sun-and-light plate computed from coordinates with the NOAA solar equations.
+
 ## Production notes
 
 - Switch `apps/web/prisma/schema.prisma` to `postgresql`; status fields are strings and JSON columns are text, so nothing else changes.

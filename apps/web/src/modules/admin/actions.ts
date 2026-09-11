@@ -52,7 +52,13 @@ export async function saveMeritOpenAction(formData: FormData) {
     registrationOpenAt: date(formData, 'registrationOpenAt'), registrationCloseAt: date(formData, 'registrationCloseAt'), firstAccessHours: num(formData, 'firstAccessHours') ?? 72,
     advanceN: num(formData, 'advanceN') ?? 2000, advanceM: num(formData, 'advanceM') ?? 100,
   };
-  const row = id ? await db.meritOpen.update({ where: { id }, data }) : await db.meritOpen.create({ data: { ...data, status: 'draft' } });
+  let row;
+  if (id) row = await db.meritOpen.update({ where: { id }, data });
+  else {
+    const year = new Date().getUTCFullYear();
+    const seq = (await db.meritOpen.count({ where: { listingNo: { startsWith: `ETK-${year}-` } } })) + 1;
+    row = await db.meritOpen.create({ data: { ...data, status: 'draft', listingNo: `ETK-${year}-${String(seq).padStart(3, '0')}` } });
+  }
   await audit({ actorId: s.userId, actorRole: s.role, action: id ? 'meritopen.update' : 'meritopen.create', objectType: 'MeritOpen', objectId: row.id, after: { fee: data.registrationFeeCents, closeAt: data.registrationCloseAt } });
   redirect(`/admin/opens/${row.id}`);
 }

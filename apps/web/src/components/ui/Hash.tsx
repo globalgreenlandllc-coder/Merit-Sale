@@ -10,10 +10,10 @@ export function Hash({ value, short = false, className = '' }: { value: string |
       type="button"
       title="Copy hash"
       onClick={() => { navigator.clipboard?.writeText(value).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1400); }); }}
-      className={`hash group inline text-left text-ink-3 hover:text-ink ${className}`}
+      className={`hash group inline py-1 -my-1 text-left text-ink-3 hover:text-ink ${className}`}
     >
       <span className="border-b border-dotted border-brass/60 group-hover:border-brass">{shown}</span>
-      <span className="ml-2 font-sans text-[11px] uppercase tracking-wider text-brass opacity-0 transition group-hover:opacity-100">{copied ? 'copied' : 'copy'}</span>
+      <span className="ml-2 font-sans text-[11px] uppercase tracking-wider text-amber opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">{copied ? 'copied' : 'copy'}</span>
     </button>
   );
 }

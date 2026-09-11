@@ -5,7 +5,8 @@ import { Hash } from '@/components/ui/Hash';
 import { Badge } from '@/components/ui/Badge';
 import { Table, Td, Tr } from '@/components/ui/Table';
 import { db } from '@/lib/db';
-import { fmtDateTime } from '@/lib/format';
+import { certLabel, fmtDateTime } from '@/lib/format';
+import { HashVerifier } from '@/components/site/HashVerifier';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Hash registry' };
@@ -27,6 +28,8 @@ shasum -a 256 package.json        # or: sha256sum package.json
 # Windows PowerShell
 Get-FileHash package.json -Algorithm SHA256`}</code></pre>
       </div>
+
+      <div className="mt-8"><HashVerifier published={[...forms.filter((f) => f.packageHash).map((f) => ({ label: `${f.meritOpen.name} · ${f.roundNumber} · ${f.label}`, hash: f.packageHash! })), ...opens.map((o) => ({ label: `${o.name} · Official Rules v${o.rulesVersion}`, hash: o.rulesHash! })), ...certs.map((c) => ({ label: `${c.meritOpen.name} · ${certLabel(c.type)}`, hash: c.hash }))]} /></div>
 
       <h2 className="plate mt-16">Sealed packages</h2>
       <Table className="mt-4" head={['Merit Open', 'Round', 'Form', 'SHA-256', 'Committed', 'Release']}>
@@ -53,7 +56,7 @@ Get-FileHash package.json -Algorithm SHA256`}</code></pre>
       <h2 className="plate mt-16">Certifications</h2>
       <Table className="mt-4" head={['Merit Open', 'Type', 'Document hash', 'Signed']}>
         {certs.map((c) => (
-          <Tr key={c.id}><Td><Link href={`/audit/${c.meritOpen.slug}`} className="link-rule">{c.meritOpen.name}</Link></Td><Td><Badge>{c.type.replace(/_/g, ' ')}</Badge></Td><Td><Hash value={c.hash} /></Td><Td>{fmtDateTime(c.signedAt)}</Td></Tr>
+          <Tr key={c.id}><Td><Link href={`/audit/${c.meritOpen.slug}`} className="link-rule">{c.meritOpen.name}</Link></Td><Td><Badge>{certLabel(c.type)}</Badge></Td><Td><Hash value={c.hash} /></Td><Td>{fmtDateTime(c.signedAt)}</Td></Tr>
         ))}
       </Table>
     </Container>

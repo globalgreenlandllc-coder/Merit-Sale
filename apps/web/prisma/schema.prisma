@@ -71,6 +71,38 @@ model Property {
   sqft                Int?
   lotSqft             Int?
   yearBuilt           Int?
+  stories             Int?
+  garageSpaces        Int?
+  heating             String?
+  cooling             String?
+  roof                String?
+  exterior            String?
+  latitude            Float?
+  longitude           Float?
+  county              String?
+  parcelNumber        String?
+  schoolDistrict      String?
+  zoning              String?
+  taxAnnualCents      Int?
+  insuranceAnnualCents Int?
+  hoaMonthlyCents     Int?
+  utilitiesMonthlyCents Int?
+  /// key of the property's plate set (built-in schematic set or admin-uploaded sheets); null = plans pending
+  planSetKey          String?
+  appraisalReportUrl  String?
+  /// counsel approval gate for neighborhood text and nearby places
+  factsApprovedAt     DateTime?
+  anchorsJson         String   @default("[]")
+  propertyType        String?
+  waterSource         String?
+  sewer               String?
+  floodZone           String?
+  foundation          String?
+  lotDimensions       String?
+  parking             String?
+  fireplaces          Int?
+  nearbyJson          String   @default("[]")
+  historyJson         String   @default("[]")
   description         String?
   neighborhood        String?
   /// draft | preview | live | closed
@@ -84,6 +116,8 @@ model Property {
 model MeritOpen {
   id                        String   @id @default(cuid())
   slug                      String   @unique
+  /// listing number the way an MLS number sits on a sheet; assigned once at creation
+  listingNo                 String?  @unique
   propertyId                String
   property                  Property @relation(fields: [propertyId], references: [id])
   name                      String

@@ -9,7 +9,7 @@ import { Table, Td, Tr } from '@/components/ui/Table';
 import { Seal } from '@/components/ui/Seal';
 import { getOpenBySlug } from '@/modules/meritopens/queries';
 import { buildAuditSummary } from '@/modules/audit/summary';
-import { fmtDateTime, roundLabel } from '@/lib/format';
+import { certLabel, fmtDateTime, roundLabel } from '@/lib/format';
 
 export const dynamic = 'force-dynamic';
 
@@ -58,7 +58,7 @@ export default async function AuditPage({ params }: { params: Promise<{ slug: st
 
       <h2 className="plate mt-14">Certifications</h2>
       <Table className="mt-4" dense head={['Type', 'Document hash', 'Signed']}>
-        {s.certifications.map((c, i) => <Tr key={i}><Td><Badge>{c.type.replace(/_/g, ' ')}</Badge></Td><Td><Hash value={c.hash} /></Td><Td>{fmtDateTime(c.signedAt)}</Td></Tr>)}
+        {s.certifications.map((c, i) => <Tr key={i}><Td><Badge>{certLabel(c.type)}</Badge></Td><Td><Hash value={c.hash} /></Td><Td>{fmtDateTime(c.signedAt)}</Td></Tr>)}
       </Table>
 
       {s.cancellation && (

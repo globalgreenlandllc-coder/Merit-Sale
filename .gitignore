@@ -11,4 +11,5 @@ coverage/
 apps/web/prisma/*.db
 apps/web/prisma/*.db-journal
 apps/web/public/releases/
+apps/web/uploads/
 .turbo/

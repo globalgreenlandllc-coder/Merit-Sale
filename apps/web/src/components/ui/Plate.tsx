@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 
 /** Engraved small-caps label with an optional index and a hairline. */
-export function Plate({ children, index, dark = false, className = '' }: { children: ReactNode; index?: string; dark?: boolean; className?: string }) {
+export function Plate({ children, index, dark = false, className = '', as: Tag = 'div' }: { children: ReactNode; index?: string; dark?: boolean; className?: string; as?: 'div' | 'h2' | 'h3' }) {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <Tag className={`flex items-center gap-3 text-[11px] font-normal ${className}`}>
       {index && <span className={`${dark ? 'plate-dark' : 'plate'} tabular-nums`}>{index}</span>}
       <span className={dark ? 'plate-dark' : 'plate'}>{children}</span>
       <span className={`h-px flex-1 ${dark ? 'bg-paper/15' : 'bg-ink/15'}`} aria-hidden />
-    </div>
+    </Tag>
   );
 }
 
