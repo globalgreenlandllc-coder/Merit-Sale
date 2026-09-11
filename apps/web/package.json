@@ -2,7 +2,7 @@
   "name": "@etk/web",
   "version": "0.1.0",
   "private": true,
-  "description": "Earn the Keys — public site, registrant test client, platform admin, and independent administrator console.",
+  "description": "Earn the Keys \u2014 public site, registrant test client, platform admin, and independent administrator console.",
   "scripts": {
     "dev": "next dev",
     "build": "node prisma/select.mjs && prisma generate && next build",
@@ -41,5 +41,8 @@
     "tailwindcss": "^4.1.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }
