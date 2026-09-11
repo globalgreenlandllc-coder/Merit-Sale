@@ -1,0 +1,81 @@
+DRAFT  |  FOR COUNSEL REVIEW  |  BRACKETED ITEMS ARE PLACEHOLDERS OR DECISIONS PENDING
+PLATFORM TERMS OF SERVICE
+[PLATFORM NAME] operated by [SPONSOR LEGAL NAME]
+Effective date: [DATE]  |  Version [1.0]
+These Terms contain a binding arbitration provision and class-action waiver in Section 12 that affect your legal rights. Please read them carefully.
+1. Acceptance and Relationship to the Official Rules
+1.1  These Terms of Service ("Terms") govern your access to and use of the website, mobile applications, and services at [URL] (the "Platform") operated by [SPONSOR LEGAL NAME] ("we," "us," or "Sponsor"). By creating an account or using the Platform you agree to these Terms and to our Privacy Policy.
+1.2  Each Merit Open offered on the Platform is governed by its own Official Rules. The Official Rules control all matters relating to eligibility, entry, Merit Open structure, scoring, prizes, refunds, and winner determination. If these Terms conflict with the Official Rules on any such matter, the Official Rules control.
+1.3  You must be at least eighteen (18) years of age [or the age of majority in your jurisdiction, if higher] to use the Platform. The Platform is not directed to minors.
+2. What the Platform Is
+2.1  The Platform offers paid admission to skill-based merit selection events (each, a "Merit Open") in which a specified prize is awarded to the entrant with the highest objective score under the applicable Official Rules. The Platform does not offer, and payments made on the Platform do not purchase, any chance, lottery ticket, raffle entry, wager, or other opportunity to win by chance.
+2.2  Each Merit Open is conducted on its published schedule regardless of the number of registrants. Each person may register for a Merit Open only once.
+2.3  Merit Opens are available only to residents of the states listed in the applicable Official Rules. We use geolocation, residency verification, and identity verification to enforce this restriction. Attempting to circumvent these controls is a violation of these Terms.
+Counsel note: Counsel to confirm whether this description is sufficient or whether a statutory disclaimer is required in the Terms as well as the Rules.
+3. Accounts and Identity Verification
+3.1  You may create only one account. You must provide accurate, current, and complete information and keep it updated.
+3.2  We use a third-party identity-verification provider to verify your identity, age, and residency at registration, before proctored rounds, and before any prize is awarded. You agree to provide the documents and images requested for that purpose and consent to their processing as described in the Privacy Policy.
+3.3  You are responsible for all activity under your account and for keeping your credentials secure. Accounts are personal and may not be shared, sold, or transferred.
+3.4  We may suspend or terminate an account that we reasonably believe is duplicate, fraudulent, in breach of these Terms or the Official Rules, or used by a person who is not eligible.
+4. Fees and Payment
+4.1  The registration fee for each Merit Open is stated in its Official Rules. Fees are in U.S. dollars and are payable through the payment methods we make available. We do not accept cash, cryptocurrency, or payment from a third party on your behalf.
+4.2  Registration fees are settled by our payment processor directly to an independent custodian and held under a written custody arrangement described in the Official Rules. We do not receive registration fees directly.
+4.3  Registration fees are non-refundable except as expressly provided in the applicable Official Rules.
+4.4  You agree not to initiate a chargeback or payment dispute for an registration fee except in the case of actual unauthorized use of your payment method. An improper chargeback results in disqualification from the affected Merit Open and may result in account termination.
+4.5  We do not offer, and you may not purchase, any additional registrations, credits, attempts, time, hints, or other advantage in any Merit Open.
+5. Proctoring, Recording, and Integrity Controls
+5.1  By registering a Merit Open you consent to the technical and proctoring controls described in the Official Rules, which may include a locked browser, focus-loss and device logging, webcam and screen recording, room scans, government ID matching, and post-round statistical screening.
+5.2  Proctoring recordings and related data are processed by us and by our proctoring vendor for the purposes of verifying identity, detecting prohibited assistance, resolving disputes, and complying with law, and are retained for the period stated in the Privacy Policy.
+5.3  Where state law requires specific consent for the collection of biometric identifiers, we will obtain that consent separately before collection, and you may decline; declining may make you unable to participate in proctored rounds.
+Counsel note: Counsel to identify applicable biometric-privacy statutes (for example, Illinois BIPA, Texas CUBI, Washington biometric law) for each cleared state and confirm the consent flow.
+6. Acceptable Use
+You agree not to:
+	•	Create more than one account or register for a Merit Open more than once by any means.
+	•	Provide false identity, age, or residency information, or use a VPN, proxy, or other means to misrepresent your location.
+	•	Receive assistance from any person, AI tool, or external resource during a Merit Open round except as expressly permitted by the Official Rules.
+	•	Copy, record, transmit, publish, or retain any Merit Open item, answer, or scoring material before its official release.
+	•	Interfere with the Platform, proctoring, or scoring systems, or attempt to access any account, data, or system without authorization.
+	•	Use bots, scripts, or automated means to access the Platform or participate in a Merit Open.
+	•	Harass, threaten, or defame any other entrant, the Administrator, or our personnel.
+	•	Use the Platform for any unlawful purpose or in violation of any applicable law.
+6.1  Violation of this Section may result in disqualification, forfeiture of fees and prizes, account termination, and referral to law enforcement.
+7. Intellectual Property and Confidentiality
+7.1  The Platform, its content, and all Merit Open items, answer keys, scoring formulas, and related materials are owned by us or our licensors and are protected by intellectual-property law. We grant you a limited, revocable, non-exclusive, non-transferable license to use the Platform for its intended purpose.
+7.2  Merit Open items are confidential until officially released under the Official Rules. You agree not to disclose or reproduce them before release.
+7.3  By submitting answers, you grant us a license to store, score, audit, and (in anonymized form) analyze them. You retain no right to the items themselves.
+8. Privacy
+8.1  Our collection, use, and disclosure of personal information is described in the Privacy Policy at [URL], which is incorporated into these Terms. It addresses identity-verification data, proctoring recordings, payment data (which we do not store), tax-reporting data, retention periods, and your rights under applicable state privacy laws.
+8.2  We may disclose information to the Administrator, the custodian, the proctoring and identity-verification vendors, the title company, tax authorities, and as required by law or legal process.
+9. Communications
+9.1  You agree to receive Merit Open-related communications (registration confirmation, round schedules, verification requests, results, and legal notices) by email and in your account. These communications are a condition of participation and cannot be opted out of while you are registered for a Merit Open.
+9.2  Marketing communications are optional and may be opted out of at any time.
+10. Disclaimers
+10.1  The Platform is provided "as is" and "as available." To the fullest extent permitted by law, we disclaim all warranties, express or implied, including merchantability, fitness for a particular purpose, and non-infringement, except that nothing in this Section limits our obligation to conduct each Merit Open and award its prize as required by the Official Rules.
+10.2  We do not warrant that the Platform will be uninterrupted or error-free. Technical failures attributable to the Platform are addressed exclusively under the technical-failure provisions of the Official Rules.
+10.3  We do not provide tax, legal, real-estate, or financial advice. Any prize has tax and ownership consequences for which you are solely responsible, and you are encouraged to consult your own advisors.
+11. Limitation of Liability and Indemnification
+11.1  To the fullest extent permitted by law, we and our affiliates, the Administrator, the custodian, and our respective officers, employees, and agents shall not be liable for any indirect, incidental, consequential, special, or punitive damages, or for any loss of profits, data, or goodwill, arising from your use of the Platform or participation in any Merit Open.
+11.2  Our total liability to you for all claims arising from the Platform or any Merit Open shall not exceed the greater of the registration fees you paid to us in the twelve months preceding the claim or $[100], except with respect to a winner's right to receive a prize under the applicable Official Rules.
+11.3  You agree to indemnify and hold us harmless from claims, losses, and expenses (including reasonable attorneys' fees) arising from your breach of these Terms or the Official Rules, your violation of law, or your infringement of any third party's rights.
+11.4  Some states do not allow certain limitations of liability. In those states, our liability is limited to the fullest extent permitted by law.
+12. Dispute Resolution, Arbitration, and Class-Action Waiver
+12.1  Merit Open disputes first. Any dispute about a score, advancement, integrity determination, or winner certification must first be submitted under the dispute procedure in the applicable Official Rules. The Administrator's decision under that procedure is final as to the Merit Open.
+12.2  Informal resolution. Before starting arbitration, you agree to send a written notice of dispute to [EMAIL/ADDRESS] describing the claim and the relief sought, and to attempt in good faith to resolve it for [60] days.
+12.3  Binding arbitration. Except as provided in Section 12.5, any dispute arising from these Terms, the Official Rules, the Platform, or any Merit Open shall be resolved by binding individual arbitration administered by [AAA / JAMS] under its [Consumer Arbitration Rules], before a single arbitrator. The Federal Arbitration Act governs this provision. The arbitrator may award any relief available in court on an individual basis. [We will pay arbitration filing and arbitrator fees for claims under $[AMOUNT], except where the arbitrator finds the claim frivolous.]
+12.4  Class-action waiver. You and we agree that each may bring claims only in an individual capacity and not as a plaintiff or class member in any purported class, collective, or representative proceeding. The arbitrator may not consolidate claims of more than one person.
+12.5  Exceptions. Either party may bring an individual claim in small-claims court, and either party may seek injunctive relief in court for infringement or misuse of intellectual property or for violation of Section 6.
+12.6  Opt-out. You may opt out of this arbitration provision by sending written notice to [ADDRESS] within [30] days after first accepting these Terms. Opting out does not affect any other provision.
+12.7  Severability of this Section. If the class-action waiver is found unenforceable as to a particular claim, then that claim (and only that claim) shall proceed in court rather than in arbitration.
+Counsel note: Enforceability against entrants in each cleared state, mass-arbitration provisions, fee-shifting, and the opt-out period are all pending counsel review.
+13. Termination
+13.1  You may close your account at any time, except that closing your account while registered for a Merit Open constitutes withdrawal from that Merit Open without refund.
+13.2  We may suspend or terminate your access for breach of these Terms or the Official Rules, for suspected fraud, or as required by law. Termination does not affect a certified winner's right to receive a prize.
+14. Changes to These Terms
+14.1  We may update these Terms by posting a revised version with a new effective date and notifying account holders by email at least [30] days before the change takes effect. Changes do not apply to a Merit Open whose Registration Period has already opened; that Merit Open remains governed by the Terms and Official Rules in effect when it opened.
+15. General
+15.1  Governing law. These Terms are governed by the laws of [STATE], without regard to conflict-of-law principles, and by applicable federal law.
+15.2  Assignment. You may not assign these Terms. We may assign them to an affiliate or successor.
+15.3  Entire agreement. These Terms, the Privacy Policy, and the applicable Official Rules are the entire agreement between you and us regarding the Platform.
+15.4  Severability; waiver. Unenforceable provisions are severed or modified to the minimum extent necessary. Failure to enforce a provision is not a waiver.
+15.5  Notices. Notices to us: [EMAIL] and [ADDRESS]. Notices to you: the email address on your account.
+15.6  Contact. [EMAIL]  |  [ADDRESS]  |  [PHONE]

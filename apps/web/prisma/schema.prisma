@@ -1,0 +1,506 @@
+// Earn the Keys — data model (spec §2). SQLite for local development; switch the
+// provider to postgresql for staging/production. Status fields are strings validated
+// in code (@etk/rules-config) so the schema is portable across providers.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String   @id @default(cuid())
+  email                String   @unique
+  phone                String?
+  dob                  DateTime?
+  legalName            String?
+  residenceState       String?
+  residenceAddress     String?
+  /// registrant | admin | item_author | administrator | proctor | auditor
+  role                 String   @default("registrant")
+  idvVendorRef         String?
+  /// none | pending | verified | failed
+  idvStatus            String   @default("none")
+  idvVerifiedAt        DateTime?
+  /// light | full
+  idvLevel             String?
+  /// none | clear | hit
+  sanctionsStatus      String   @default("none")
+  sanctionsCheckedAt   DateTime?
+  deviceFingerprintsJson String @default("[]")
+  priorWinner          Boolean  @default(false)
+  excludedReason       String?
+  mfaEnabled           Boolean  @default(false)
+  createdAt            DateTime @default(now())
+
+  reservations   Reservation[]
+  registrations  Registration[]
+  accommodations Accommodation[]
+  notifications  Notification[]
+}
+
+model Property {
+  id                  String   @id @default(cuid())
+  slug                String   @unique
+  name                String
+  speEntityId         String?
+  speEntityName       String?
+  address             String
+  city                String
+  state               String
+  zip                 String?
+  legalDescription    String?
+  countyRecorderRef   String?
+  countyRecorderUrl   String?
+  deedRecordedAt      DateTime?
+  /// under_option | under_contract | owned
+  titleStatus         String   @default("under_option")
+  liensJson           String   @default("[]")
+  includedItemsJson   String   @default("[]")
+  excludedItemsJson   String   @default("[]")
+  appraisedValueCents Int?
+  appraisalDate       DateTime?
+  appraiserName       String?
+  photosJson          String   @default("[]")
+  disclosuresPackUrl  String?
+  beds                Int?
+  baths               Float?
+  sqft                Int?
+  lotSqft             Int?
+  yearBuilt           Int?
+  description         String?
+  neighborhood        String?
+  /// draft | preview | live | closed
+  status              String   @default("draft")
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  meritOpens MeritOpen[]
+}
+
+model MeritOpen {
+  id                        String   @id @default(cuid())
+  slug                      String   @unique
+  propertyId                String
+  property                  Property @relation(fields: [propertyId], references: [id])
+  name                      String
+  city                      String
+  /// practice opens carry a small cash prize and no property transfer (Phase 0)
+  isPractice                Boolean  @default(false)
+  stateEligibilityJson      String   @default("[]")
+  registrationFeeCents      Int
+  cashComponentCents        Int
+  reservationTarget         Int?
+  showReservationCount      Boolean  @default(true)
+  registrationOpenAt        DateTime?
+  registrationCloseAt       DateTime?
+  firstAccessHours          Int      @default(72)
+  advanceN                  Int
+  advanceM                  Int
+  rulesVersion              String?
+  rulesHash                 String?
+  lockedAt                  DateTime?
+  lockedById                String?
+  titleOverrideJustification String?
+  /// see @etk/rules-config MERIT_OPEN_STATUSES
+  status                    String   @default("draft")
+  cancellationReasonCode    String?
+  cancellationNote          String?
+  cancelledAt               DateTime?
+  winnerRegistrationId      String?
+  winnerConsentToPublish    Boolean  @default(false)
+  closedAt                  DateTime?
+  createdAt                 DateTime @default(now())
+  updatedAt                 DateTime @updatedAt
+
+  rulesets       Ruleset[]
+  reservations   Reservation[]
+  registrations  Registration[]
+  rounds         Round[]
+  forms          Form[]
+  certifications Certification[]
+  accommodations Accommodation[]
+  notifications  Notification[]
+}
+
+model Ruleset {
+  id                   String   @id @default(cuid())
+  meritOpenId          String
+  meritOpen            MeritOpen @relation(fields: [meritOpenId], references: [id])
+  version              String
+  configJson           String
+  officialRulesText    String
+  termsVersion         String
+  hash                 String?
+  lockedAt             DateTime?
+  /// correction workflow (Rules 13.2): supersededById points at the corrected version
+  supersededById       String?
+  correctionReason     String?
+  createdAt            DateTime @default(now())
+
+  @@unique([meritOpenId, version])
+}
+
+model Reservation {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  meritOpenId String
+  meritOpen   MeritOpen @relation(fields: [meritOpenId], references: [id])
+  verified    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, meritOpenId])
+}
+
+model Registration {
+  id                      String   @id @default(cuid())
+  userId                  String
+  user                    User     @relation(fields: [userId], references: [id])
+  meritOpenId             String
+  meritOpen               MeritOpen @relation(fields: [meritOpenId], references: [id])
+  /// pending | confirmed | disqualified | withdrawn | refunded
+  status                  String   @default("pending")
+  confirmedAt             DateTime?
+  eligibilitySnapshotJson String   @default("{}")
+  acceptedRulesHash       String?
+  acceptedTermsVersion    String?
+  acceptedAt              DateTime?
+  proctoringConsentAt     DateTime?
+  disqualifiedReason      String?
+  affidavitSignedAt       DateTime?
+  reVerifiedAt            DateTime?
+  createdAt               DateTime @default(now())
+
+  payment      Payment?
+  attempts     Attempt[]
+  advancements Advancement[]
+  disputes     Dispute[]
+
+  @@unique([userId, meritOpenId])
+}
+
+model Payment {
+  id                     String   @id @default(cuid())
+  registrationId         String   @unique
+  registration           Registration @relation(fields: [registrationId], references: [id])
+  provider               String
+  processorRef           String?
+  amountCents            Int
+  feeCents               Int      @default(0)
+  currency               String   @default("usd")
+  /// authorized | settled | refunded | chargeback
+  status                 String   @default("authorized")
+  custodianSettlementRef String?
+  settledAt              DateTime?
+  refundedAt             DateTime?
+  createdAt              DateTime @default(now())
+
+  refunds Refund[]
+}
+
+model Refund {
+  id          String   @id @default(cuid())
+  paymentId   String
+  payment     Payment  @relation(fields: [paymentId], references: [id])
+  amountCents Int
+  /// queued | completed | failed | manual
+  status      String   @default("queued")
+  reason      String
+  processorRef String?
+  attemptedAt DateTime?
+  createdAt   DateTime @default(now())
+}
+
+model Round {
+  id                 String   @id @default(cuid())
+  meritOpenId        String
+  meritOpen          MeritOpen @relation(fields: [meritOpenId], references: [id])
+  /// r1 | r2 | r3 | final | tiebreak_1 | tiebreak_2 ...
+  number             String
+  sequence           Int
+  /// qualifier | items | proctored | optimization | tiebreak
+  type               String
+  windowStart        DateTime?
+  windowEnd          DateTime?
+  scheduledAt        DateTime?
+  durationSeconds    Int
+  latencyGraceSeconds Int     @default(3)
+  integrityTier      Int      @default(1)
+  capacity           Int?
+  formId             String?  @unique
+  form               Form?    @relation("primaryForm", fields: [formId], references: [id])
+  reserveFormId      String?  @unique
+  reserveForm        Form?    @relation("reserveForm", fields: [reserveFormId], references: [id])
+  /// scheduled | open | closed | scoring | certified
+  status             String   @default("scheduled")
+  unsealedAt         DateTime?
+  unsealedById       String?
+  scoresPostedAt     DateTime?
+  disputeDeadlineAt  DateTime?
+  rescheduleReason   String?
+  createdAt          DateTime @default(now())
+
+  attempts     Attempt[]
+  advancements Advancement[]
+  disputes     Dispute[]
+
+  @@unique([meritOpenId, number])
+}
+
+model Form {
+  id                String   @id @default(cuid())
+  meritOpenId       String
+  meritOpen         MeritOpen @relation(fields: [meritOpenId], references: [id])
+  roundNumber       String
+  /// primary | reserve | tiebreak
+  label             String
+  /// SHA-256 of the exact bytes that will be released
+  packageHash       String?
+  hashPublishedAt   DateTime?
+  /// AES-256-GCM under the Administrator key; platform cannot read this
+  sealedPackage     String?
+  /// exact bytes released after certification + dispute window
+  releasedPackage   String?
+  packageReleasedAt DateTime?
+  createdAt         DateTime @default(now())
+
+  items        Item[]
+  primaryOf    Round?   @relation("primaryForm")
+  reserveOf    Round?   @relation("reserveForm")
+}
+
+model Item {
+  id                  String  @id @default(cuid())
+  formId              String
+  form                Form    @relation(fields: [formId], references: [id])
+  position            Int
+  prompt              String
+  /// integer | decimal | string_exact | ordering | assignment | allocation — no select type exists
+  inputType           String
+  /// plaintext only in the pre-lock authoring workspace; nulled at lock
+  scoringSpecJson     String?
+  validationRulesJson String?
+  fieldsJson          String?
+  inputHint           String?
+  maxPoints           Float
+  tieOrderFlag        Boolean @default(false)
+  calculatorPermitted Boolean @default(false)
+
+  responses Response[]
+  disputes  Dispute[]
+
+  @@unique([formId, position])
+}
+
+model Attempt {
+  id                   String   @id @default(cuid())
+  registrationId       String
+  registration         Registration @relation(fields: [registrationId], references: [id])
+  roundId              String
+  round                Round    @relation(fields: [roundId], references: [id])
+  formId               String
+  startedAt            DateTime @default(now())
+  expiresAt            DateTime
+  submittedAt          DateTime?
+  sessionToken         String   @unique
+  deviceFingerprint    String?
+  ip                   String?
+  userAgent            String?
+  focusLossEventsJson  String   @default("[]")
+  proctoringSessionRef String?
+  /// in_progress | submitted | expired | voided
+  status               String   @default("in_progress")
+  voidReason           String?
+
+  responses      Response[]
+  score          Score?
+  integrityFlags IntegrityFlag[]
+
+  @@unique([registrationId, roundId])
+}
+
+model Response {
+  id          String   @id @default(cuid())
+  attemptId   String
+  attempt     Attempt  @relation(fields: [attemptId], references: [id])
+  itemId      String
+  item        Item     @relation(fields: [itemId], references: [id])
+  rawAnswer   String
+  renderedAt  DateTime?
+  submittedAt DateTime @default(now())
+  score       Float?
+  valid       Boolean?
+  canonical   String?
+
+  @@unique([attemptId, itemId])
+}
+
+model Score {
+  id                  String   @id @default(cuid())
+  attemptId           String   @unique
+  attempt             Attempt  @relation(fields: [attemptId], references: [id])
+  totalPoints         Float
+  tieOrderPoints      Float
+  elapsedSeconds      Int
+  r1Pass              Boolean?
+  computedAt          DateTime @default(now())
+  keyPackageHashUsed  String
+}
+
+model Advancement {
+  id              String   @id @default(cuid())
+  roundId         String
+  round           Round    @relation(fields: [roundId], references: [id])
+  registrationId  String
+  registration    Registration @relation(fields: [registrationId], references: [id])
+  rank            Int?
+  advanced        Boolean
+  /// score | inclusion_rule | r1_pass | below_cutoff | r1_fail | voided
+  reason          String
+  certificationId String?
+  certifiedAt     DateTime?
+
+  @@unique([roundId, registrationId])
+}
+
+model IntegrityFlag {
+  id           String   @id @default(cuid())
+  attemptId    String
+  attempt      Attempt  @relation(fields: [attemptId], references: [id])
+  /// duplicate_answers | implausible_timing | shared_device | shared_network | focus_loss | proctor_flag | report
+  type         String
+  evidenceJson String
+  /// open | cleared | upheld
+  status       String   @default("open")
+  decidedById  String?
+  decidedAt    DateTime?
+  decisionNote String?
+  createdAt    DateTime @default(now())
+}
+
+model Dispute {
+  id             String   @id @default(cuid())
+  registrationId String?
+  registration   Registration? @relation(fields: [registrationId], references: [id])
+  reporterUserId String?
+  roundId        String?
+  round          Round?   @relation(fields: [roundId], references: [id])
+  itemId         String?
+  item           Item?    @relation(fields: [itemId], references: [id])
+  /// score_challenge | integrity_report | technical_failure
+  type           String
+  filedAt        DateTime @default(now())
+  deadlineAt     DateTime?
+  statement      String
+  /// open | decided | withdrawn
+  status         String   @default("open")
+  decision       String?
+  decidedById    String?
+  decidedAt      DateTime?
+}
+
+model Certification {
+  id           String   @id @default(cuid())
+  meritOpenId  String
+  meritOpen    MeritOpen @relation(fields: [meritOpenId], references: [id])
+  roundId      String?
+  /// lock | r1_pass_list | r2_advancement | r3_advancement | winner | cancellation | release
+  type         String
+  documentJson String
+  hash         String
+  signedById   String
+  signedAt     DateTime @default(now())
+}
+
+model Accommodation {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  meritOpenId        String
+  meritOpen          MeritOpen @relation(fields: [meritOpenId], references: [id])
+  request            String
+  /// requested | granted | denied
+  status             String   @default("requested")
+  decision           String?
+  extraTimeSeconds   Int      @default(0)
+  assistiveFlagsJson String   @default("[]")
+  decidedAt          DateTime?
+  createdAt          DateTime @default(now())
+
+  @@unique([userId, meritOpenId])
+}
+
+/// Append-only. Each entry hashes the previous entry's hash so the log forms a chain.
+model AuditEvent {
+  seq        Int      @id @default(autoincrement())
+  actorId    String?
+  actorRole  String
+  action     String
+  objectType String
+  objectId   String
+  beforeHash String?
+  afterHash  String?
+  detailJson String?
+  prevHash   String?
+  entryHash  String
+  ip         String?
+  timestamp  DateTime @default(now())
+}
+
+model StateRule {
+  code               String   @id
+  name               String
+  eligible           Boolean  @default(false)
+  /// key of a disclosure template rendered on the Merit Open page, e.g. CA-BP-17539.1
+  disclosureTemplate String?
+  counselStatus      String   @default("not_reviewed")
+  notes              String?
+  updatedAt          DateTime @updatedAt
+}
+
+model ExclusionEntry {
+  id        String   @id @default(cuid())
+  /// email | domain | name
+  matchType String
+  value     String
+  /// employee | contractor | vendor | family | seller | title_company
+  category  String
+  party     String
+  addedById String?
+  createdAt DateTime @default(now())
+}
+
+model Vendor {
+  id         String   @id @default(cuid())
+  /// payments | custodian | idv | sanctions | proctoring | email | title
+  kind       String
+  name       String
+  configJson String   @default("{}")
+  active     Boolean  @default(true)
+  publicSummaryUrl String?
+  updatedAt  DateTime @updatedAt
+}
+
+model Notification {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  meritOpenId String?
+  meritOpen   MeritOpen? @relation(fields: [meritOpenId], references: [id])
+  /// legal_notice | receipt | schedule | result | marketing
+  kind        String
+  mandatory   Boolean  @default(false)
+  subject     String
+  body        String
+  sentAt      DateTime @default(now())
+}
+
+model SiteSetting {
+  key       String   @id
+  valueJson String
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,66 @@
+{
+  "cases": [
+    {
+      "name": "no ties, capacity 3",
+      "capacity": 3,
+      "rows": [
+        {"registrationId": "r1", "totalPoints": 10, "tieOrderPoints": 3, "elapsedSeconds": 500},
+        {"registrationId": "r2", "totalPoints": 9,  "tieOrderPoints": 3, "elapsedSeconds": 400},
+        {"registrationId": "r3", "totalPoints": 8,  "tieOrderPoints": 2, "elapsedSeconds": 300},
+        {"registrationId": "r4", "totalPoints": 7,  "tieOrderPoints": 3, "elapsedSeconds": 100}
+      ],
+      "expect": {"advancing": ["r1", "r2", "r3"], "inclusionRuleApplied": false, "cutoffRank": 3, "tiedAtCutoff": 0}
+    },
+    {
+      "name": "tie straddles cutoff: whole group advances",
+      "capacity": 3,
+      "rows": [
+        {"registrationId": "a", "totalPoints": 10, "tieOrderPoints": 3, "elapsedSeconds": 500},
+        {"registrationId": "b", "totalPoints": 9,  "tieOrderPoints": 3, "elapsedSeconds": 400},
+        {"registrationId": "c", "totalPoints": 9,  "tieOrderPoints": 3, "elapsedSeconds": 400},
+        {"registrationId": "d", "totalPoints": 9,  "tieOrderPoints": 3, "elapsedSeconds": 400},
+        {"registrationId": "e", "totalPoints": 8,  "tieOrderPoints": 3, "elapsedSeconds": 100}
+      ],
+      "expect": {"advancing": ["a", "b", "c", "d"], "inclusionRuleApplied": true, "cutoffRank": 2, "tiedAtCutoff": 3}
+    },
+    {
+      "name": "tie broken by tie-order subset",
+      "capacity": 2,
+      "rows": [
+        {"registrationId": "a", "totalPoints": 9, "tieOrderPoints": 2, "elapsedSeconds": 100},
+        {"registrationId": "b", "totalPoints": 9, "tieOrderPoints": 3, "elapsedSeconds": 900},
+        {"registrationId": "c", "totalPoints": 9, "tieOrderPoints": 1, "elapsedSeconds": 50}
+      ],
+      "expect": {"advancing": ["b", "a"], "inclusionRuleApplied": false, "cutoffRank": 2, "tiedAtCutoff": 0}
+    },
+    {
+      "name": "tie broken by elapsed time only after total and subset are identical",
+      "capacity": 1,
+      "rows": [
+        {"registrationId": "slow", "totalPoints": 9, "tieOrderPoints": 3, "elapsedSeconds": 900},
+        {"registrationId": "fast", "totalPoints": 9, "tieOrderPoints": 3, "elapsedSeconds": 300}
+      ],
+      "expect": {"advancing": ["fast"], "inclusionRuleApplied": false, "cutoffRank": 1, "tiedAtCutoff": 0}
+    },
+    {
+      "name": "fewer registrants than capacity",
+      "capacity": 10,
+      "rows": [
+        {"registrationId": "a", "totalPoints": 1, "tieOrderPoints": 0, "elapsedSeconds": 10},
+        {"registrationId": "b", "totalPoints": 0, "tieOrderPoints": 0, "elapsedSeconds": 10}
+      ],
+      "expect": {"advancing": ["a", "b"], "inclusionRuleApplied": false, "cutoffRank": null, "tiedAtCutoff": 0}
+    },
+    {
+      "name": "tie fully inside capacity is ordinary advancement",
+      "capacity": 3,
+      "rows": [
+        {"registrationId": "a", "totalPoints": 9, "tieOrderPoints": 3, "elapsedSeconds": 100},
+        {"registrationId": "b", "totalPoints": 9, "tieOrderPoints": 3, "elapsedSeconds": 100},
+        {"registrationId": "c", "totalPoints": 5, "tieOrderPoints": 0, "elapsedSeconds": 100},
+        {"registrationId": "d", "totalPoints": 4, "tieOrderPoints": 0, "elapsedSeconds": 100}
+      ],
+      "expect": {"advancing": ["a", "b", "c"], "inclusionRuleApplied": false, "cutoffRank": 3, "tiedAtCutoff": 0}
+    }
+  ]
+}

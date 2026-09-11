@@ -1,0 +1,15 @@
+export const env = {
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  sessionSecret: process.env.SESSION_SECRET ?? 'dev-only-change-me-before-any-deploy',
+  authProvider: process.env.AUTH_PROVIDER ?? 'local',
+  sealKey: process.env.ADMINISTRATOR_SEAL_KEY ?? '',
+  paymentsProvider: process.env.PAYMENTS_PROVIDER ?? 'mock',
+  stripeSecretKey: process.env.STRIPE_SECRET_KEY ?? '',
+  stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? '',
+  stripeCustodianAccountId: process.env.STRIPE_CUSTODIAN_ACCOUNT_ID ?? '',
+  idvProvider: process.env.IDV_PROVIDER ?? 'mock',
+  sanctionsProvider: process.env.SANCTIONS_PROVIDER ?? 'mock',
+  proctoringProvider: process.env.PROCTORING_PROVIDER ?? 'mock',
+  geoDevState: process.env.GEO_DEV_STATE ?? '',
+  isProd: process.env.NODE_ENV === 'production',
+};

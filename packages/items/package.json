@@ -1,0 +1,13 @@
+{
+  "name": "@etk/items",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Item schema (free-response only), pre-lock validators, and the sealed package builder (hash commitment + Administrator-key encryption).",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": { "test": "vitest run", "typecheck": "tsc --noEmit" },
+  "dependencies": { "@etk/scoring": "*", "@etk/rules-config": "*", "zod": "^4.0.0" },
+  "devDependencies": { "typescript": "^5.9.0", "vitest": "^5.0.0" }
+}

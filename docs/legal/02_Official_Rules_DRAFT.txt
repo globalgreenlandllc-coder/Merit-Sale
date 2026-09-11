@@ -1,0 +1,158 @@
+DRAFT  |  FOR COUNSEL REVIEW  |  BRACKETED ITEMS ARE PLACEHOLDERS OR DECISIONS PENDING
+OFFICIAL RULES
+The [CITY] Merit Open
+The home: the residential property located at [PROPERTY ADDRESS] plus a cash component
+Item
+Detail
+Sponsor
+[SPONSOR LEGAL NAME], a [STATE] [entity type], [ADDRESS] ("Sponsor")
+Property owner
+[PROPERTY SPE LEGAL NAME], a [STATE] limited liability company wholly controlled by Sponsor ("Property Owner")
+Independent administrator
+[ADMINISTRATOR COMPANY NAME], [ADDRESS] ("Administrator")
+Funds custodian
+[CUSTODIAN NAME], [account type] ("Custodian")
+Registration fee
+$[25.00] USD, one registration per eligible person
+Registration period
+[DATE, TIME, TIME ZONE] to [DATE, TIME, TIME ZONE] ("Registration Period")
+Eligible states
+[LIST OF CLEARED STATES]
+Round 1 window
+[DATE/TIME] to [DATE/TIME]
+Round 2
+[DATE/TIME]
+Final
+[DATE/TIME], [LOCATION or "fully proctored remote session"]
+Rules version
+[v1.0], locked [DATE]. Hash of this document: [HASH]
+
+THE MERIT OPEN IS A SKILL-BASED SELECTION EVENT. THE HOME IS AWARDED SOLELY ON OBJECTIVE SCORE UNDER THESE OFFICIAL RULES. NO DRAWING, RANDOM SELECTION, OR OTHER ELEMENT OF CHANCE IS USED AT ANY STAGE. EACH PERSON MAY REGISTER ONCE. PAYING THE REGISTRATION FEE DOES NOT PURCHASE A CHANCE TO WIN; IT PURCHASES A SEAT AT THE TEST. THE MERIT OPEN WILL BE HELD ON THE PUBLISHED SCHEDULE REGARDLESS OF THE NUMBER OF REGISTRANTS. WINNING THE GRAND PRIZE HAS SIGNIFICANT TAX AND OWNERSHIP CONSEQUENCES DESCRIBED IN SECTION 6.
+Counsel note: The all-caps summary is a placeholder. Counsel to confirm required statutory disclosures for the prototype state and whether any "void where prohibited" or state-specific language must appear here.
+1. Agreement to Rules
+1.1  By creating an account, paying the Registration Fee, or participating in any round of the [CITY] Merit Open (the "Merit Open"), a skill-based merit selection event, you ("Entrant" or "you") agree to be bound by these Official Rules ("Rules"), the Platform Terms of Service ("Terms"), and the Privacy Policy. If the Rules and the Terms conflict regarding the Merit Open, the Rules control.
+1.2  The Rules are locked as of the version date above and will not be changed after the Registration Period opens except as expressly permitted in Section 13.
+1.3  Decisions of the Administrator made under these Rules are final and binding on all matters relating to the Merit Open, subject only to the dispute procedure in Section 11.
+2. Eligibility
+2.1  Registration is open only to natural persons who, at the time of registration and at all times through prize acceptance, are (a) at least eighteen (18) years of age [or the age of majority in their state of residence, if higher], (b) legal residents of, and physically located in, one of the Eligible States, and (c) able to lawfully receive title to real property in [PROPERTY STATE].
+2.2  The following are not eligible: officers, directors, employees, contractors, and agents of Sponsor, Property Owner, Administrator, Custodian, the proctoring vendor, the item authors, and the title company; the seller of the Property and its principals; and the immediate family members (spouse, domestic partner, parent, child, sibling, and their spouses) and household members of any of the foregoing.
+2.3  Persons subject to U.S. sanctions or otherwise prohibited by law from participating are not eligible.
+2.4  One registration per person. Each person may create only one account and pay only one Registration Fee. Any attempt to register more than once, by any means, will result in disqualification of that person and forfeiture of all fees paid.
+2.5  Sponsor and Administrator may require proof of eligibility at any time. Providing false information is grounds for disqualification and forfeiture.
+Counsel note: Confirm age minimum, whether the Eligible States list must appear in the Rules or may be maintained on the platform, and whether any state requires exclusion of additional categories of persons.
+3. How to Register
+3.1  During the Registration Period, go to [URL], create an account, complete identity and eligibility verification, read and affirmatively accept these Rules, the Terms, and the Privacy Policy, and pay the Registration Fee using an approved payment method.
+3.2  A registration is complete only when the Registration Fee has been authorized and settled and identity verification has been passed. Sponsor will confirm completion by email and in your account. If your registration is not confirmed, it does not exist.
+3.3  The Registration Fee is fixed. No entrant will be offered a different price, additional registrations, extra attempts, extended time, or any other advantage in exchange for any payment. There are no tiers, bundles, credits, or upgrades.
+3.4  Registration Fees are paid to the Custodian and held under the custody arrangement described in Section 12. Sponsor does not receive Registration Fees directly.
+3.5  Registration Fees are non-refundable except as expressly stated in Section 12.
+3.6  The Registration Period closes at the stated date and time. Late, incomplete, or unverified registrations will not be accepted. The Registration Period will not be extended.
+4. Merit Open Structure
+4.1  The Merit Open consists of Round 1, Round 2, a Final, and, only if required, a Tie-Break. Every registered, verified entrant who remains eligible receives the same substantive opportunity to compete in Round 1.
+Round
+Format
+Conditions
+Advancement
+Round 1
+30 free-response reasoning items; one common form; one attempt; [90] minutes
+Online; locked browser; identity verified at registration
+Top [N] by Section 5
+Round 2
+[12–15] multi-step problems; predetermined partial-credit formulas; one common form; [120] minutes
+Online; live proctored; government ID match
+Top [M] by Section 5
+Final
+One optimization problem with a continuous numerical objective; best valid result; [3] hours
+[In person at LOCATION] or fully proctored remote; ID re-verified; affidavit
+Highest valid score wins
+Tie-Break
+Sealed sudden-death problems (Section 5.5)
+Same as Final
+Score only
+
+4.2  All items are self-contained: every fact needed to answer an item is provided in the item. No item requires outside knowledge, trivia, professional credentials, or physical performance.
+4.3  All scored items are free-response. No scored item is multiple-choice, true/false, or select-from-list.
+4.4  Each item has either one predetermined correct answer or a predetermined numerical scoring formula. Scoring is applied by the platform under the locked answer key and formulas. No person exercises judgment in assigning any score.
+4.5  All entrants in a round receive the same items in the same order. No random selection or ordering of items is used.
+4.6  Time limits are set to allow a deliberate attempt at every item. Elapsed time is not a primary scoring input and is used only as described in Section 5.2(c).
+4.7  Round dates and windows are stated above. Rounds 2 and the Final are administered at a single scheduled time. Round 1 is administered within a window; each entrant selects one start time within the window and may begin only once.
+5. Scoring, Advancement, and Tie-Break
+5.1  Score. Your score in a round is the sum of points earned on that round's items under the locked answer key and formulas. Blank items earn zero points. Incorrect answers earn zero points [unless a stated formula provides partial credit]. Invalid Final submissions (those that violate a stated constraint) earn zero points.
+5.2  Advancement order. Advancement from Round 1 and Round 2 is determined by the following rules applied in order, and by nothing else: (a) total round score, higher advancing; (b) among entrants with identical total scores, score on the Tie-Order Subset for that round (Round 1: items [21–30]; Round 2: items [10–15]), higher advancing; (c) among entrants still identical, total elapsed time on the round measured from the first-item start timestamp to final submission, lower advancing.
+5.3  Inclusion rule. If, after applying Section 5.2, more entrants are tied at the final advancing position than remaining capacity allows, all entrants tied at that position advance. No entrant is ever excluded from advancement by any random or discretionary method.
+5.4  Winner. The winner is the eligible finalist with the highest valid Final score. Elapsed time is not used in the Final.
+5.5  Tie-Break. If two or more finalists have identical highest Final scores to the full precision of the published formula, the Administrator will administer, to all tied finalists simultaneously and under Final conditions, the first problem from a sealed Tie-Break set prepared and committed under Section 7 before the Final. The highest score on that problem wins. If still tied, the next sealed problem is administered, and so on until a single highest score exists. If the sealed set is exhausted, an additional problem will be prepared by the original item authors under the same commitment process and administered in the same way. No coin flip, drawing, random number, or preference of any person will be used.
+5.6  Certification. The Administrator certifies the advancing list after each round and the winner after the Final, based solely on Sections 5.1 to 5.5 and the eligibility and integrity determinations in Sections 8 and 9.
+Counsel note: Confirm (i) whether elapsed time as a tertiary metric in 5.2(c) is acceptable or should be replaced with additional scored items; (ii) whether N and M must be fixed numbers in the Rules; (iii) whether the inclusion rule requires any disclosure of maximum possible round size.
+6. Grand Prize
+6.1  Property. The Grand Prize includes fee simple title to the residential property at [PROPERTY ADDRESS], legally described in Exhibit A ("Property"), together with the fixtures and personal property listed in Exhibit B and excluding the items listed in Exhibit B as excluded. The Property is conveyed by [statutory warranty deed / deed form per counsel] free of monetary liens, subject to matters of record listed in Exhibit C.
+6.2  Cash component. The Grand Prize also includes a cash payment of $[AMOUNT] ("Cash Component"), paid at closing [by the Custodian through the title company]. The Cash Component is intended to assist with, but is not a guarantee of, the winner's income tax liability arising from the Grand Prize.
+6.3  Stated value. The approximate retail value of the Property is $[AMOUNT], based on [independent appraisal dated DATE / purchase price]. Total approximate retail value of the Grand Prize is $[AMOUNT]. Actual value at the time of transfer may differ. No difference between stated and actual value will be awarded.
+6.4  Taxes. The Grand Prize is taxable income to the winner. Sponsor will report the value of the Grand Prize to tax authorities as required by law and will issue the winner [IRS Form 1099-MISC / form per counsel]. The winner is solely responsible for all federal, state, and local income taxes. [Sponsor will withhold $[AMOUNT] from the Cash Component as required by law.] The winner is strongly encouraged to consult a tax advisor before accepting the Grand Prize.
+6.5  Closing costs and ownership costs. [Sponsor / Property Owner] pays: owner's title insurance, deed preparation, recording of the deed, [real-estate transfer or excise tax to the extent imposed on the transferor], and the title company's closing fee. The winner pays: property taxes and HOA assessments prorated from the closing date, homeowner's insurance, utilities, and all costs of ownership from and after closing, and any transfer tax imposed by law on the transferee. Exhibit D allocates all closing items in detail.
+6.6  Condition. The Property is conveyed in its condition at closing, with the disclosures required by [PROPERTY STATE] law provided to the winner before acceptance, and with no warranty other than those in the deed and any assignable builder or manufacturer warranties listed in Exhibit B.
+6.7  No substitution. No cash alternative or substitute property will be offered [except as provided in Section 13.3 if the Property becomes unavailable].
+6.8  The Grand Prize is not transferable before closing. The winner may not assign the right to receive the Grand Prize.
+Counsel note: Counsel to decide deed form, whether a cash alternative must be offered, the withholding treatment of the Cash Component, transfer-tax allocation, and the required real-estate disclosures package.
+7. Answer-Key Commitment and Public Verification
+7.1  Before each round opens, the Administrator receives the final item set, answer key, scoring formulas, and (before the Final) the sealed Tie-Break set, in a sealed digital package. The Administrator publishes a [SHA-256] hash of the package at [URL] before the round opens.
+7.2  After scores for the round are certified and the dispute window in Section 11 has closed, the Administrator releases the package at the same URL so that any person can verify that the keys used for scoring match the committed hash.
+7.3  The Tie-Break set is released only after the winner is certified, whether or not a Tie-Break was needed.
+8. Integrity, Prohibited Assistance, and Accommodations
+8.1  Individual work. All items must be answered by the entrant alone. Prohibited during any round: assistance from any other person; use of any AI tool, search engine, external website, messaging, or communication; use of any device other than the one registered for the session; screen sharing or recording other than by Sponsor's proctoring; and any attempt to copy, transmit, or retain item content.
+8.2  Permitted materials. [Blank scratch paper and a non-programmable calculator are permitted only where an item states so.] All other materials are prohibited.
+8.3  Technical controls. Round 1 uses a locked browser with full-screen enforcement, focus-loss logging, disabled copy and paste, and device and session logging. Rounds 2 and the Final use live proctoring with webcam, screen recording, room scan, and government ID match, and the Final additionally requires a signed affidavit of unassisted work. By registering, you consent to these controls as described in the Terms and Privacy Policy.
+8.4  Screening and review. After Round 1, the Administrator applies pre-defined statistical screens (including identical answer strings, implausible timing, and shared device or network indicators). Flagged entrants are reviewed under the procedure in Section 11 before advancement is certified. Round 1 advancement is provisional until that review is complete.
+8.5  Consequences. Violation of Section 8 results in disqualification, forfeiture of the Registration Fee and any prize, and, where warranted, referral to law enforcement. If a violation is discovered after a prize is awarded, Sponsor may seek return of the prize [and the next eligible finalist under Section 5 will be certified].
+8.6  Confidentiality of items. All item content is Sponsor's confidential property until the package is released under Section 7. Disclosure or reproduction before release is a violation of Section 8.
+8.7  Accommodations. Entrants requiring accommodation for a disability may request it at [URL] no later than [X days] before the applicable round. Accommodations (for example, extended time or assistive technology) are provided where reasonable and do not alter the items, the answer key, or the scoring formulas. Accommodation decisions are made under a written procedure and are not made on the basis of any entrant's score.
+8.8  Technical failure. A technical failure attributable to Sponsor's platform or proctoring system, verified under the procedure in Exhibit E, is remedied by [a re-administration of the affected round to all affected entrants using the committed reserve form] and never by a discretionary adjustment to any score. Failures of an entrant's own device, connection, or environment are not platform failures. Entrants are responsible for meeting the published technical requirements.
+8.9  Compromised form. If the Administrator determines that a round's form was materially compromised before or during the round, the round is re-administered to all affected entrants using the reserve form committed under Section 7. No random reassignment is used.
+9. Winner Verification and Announcement
+9.1  Before certification, the potential winner must complete identity, age, residency, and eligibility re-verification; sign an affidavit of eligibility and compliance with these Rules; sign the prize acceptance and disclosure acknowledgments in Exhibit F; and, where permitted by law, sign a publicity release.
+9.2  If the potential winner fails verification, is found ineligible, declines the Grand Prize, or fails to return required documents within [X] days of notice, the potential winner forfeits the Grand Prize and the finalist with the next-highest valid Final score under Section 5 becomes the potential winner. This process continues until a winner accepts. No new random or discretionary selection is used.
+9.3  The Administrator issues a written certification of the winner, which is delivered to the title company and published in summary form under Section 14.
+9.4  The winner will be announced within [X] days after certification. Sponsor may withhold announcement until closing conditions are satisfied.
+10. Closing and Transfer of the Property
+10.1  Closing will occur through [TITLE COMPANY] within [X] days after certification, subject to the winner's cooperation and satisfaction of ordinary closing conditions.
+10.2  The winner must provide the information reasonably required by the title company and tax authorities, take title in the winner's own name [or a revocable trust of which the winner is grantor, if approved by counsel], and attend or execute closing documents as required.
+10.3  Possession is delivered at closing. Keys and access are provided at closing.
+10.4  If the winner fails to complete closing within [X] days after the title company confirms readiness, other than because of Sponsor's or Property Owner's default, the winner forfeits the Grand Prize and Section 9.2 applies.
+11. Disputes, Score Challenges, and Administrator Authority
+11.1  Score challenge. An entrant may challenge his or her own score in a round by submitting a written challenge at [URL] within [72 hours] after scores for that round are posted. A challenge must identify the specific item and the claimed error. Challenges to another entrant's score are not permitted except through the integrity report process below.
+11.2  Integrity report. Any person may report suspected violations of Section 8 at [URL]. Reports are reviewed by the Administrator under Exhibit E.
+11.3  Administrator decision. The Administrator decides challenges and integrity matters by applying the locked answer key, formulas, and these Rules. The Administrator has no authority to alter any answer key, formula, or rule, and no authority to select a winner on any basis other than Section 5. The Administrator's written decision is final for purposes of the Merit Open.
+11.4  Binding arbitration. Any dispute that is not resolved under Sections 11.1 to 11.3 is subject to the dispute-resolution provisions of the Terms, including binding individual arbitration and the class-action waiver, to the extent enforceable.
+Counsel note: Counsel to confirm enforceability of the arbitration and class-waiver provisions against entrants in each cleared state and whether an opt-out mechanism is required.
+12. Custody of Registration Fees, Refunds, and Cancellation
+12.1  Custody. Registration Fees are settled by the payment processor directly to the Custodian and held [in a trust account / FBO account / licensed escrow] under a written custody agreement. Sponsor has no unilateral access to Registration Fees. Funds are released only at the events specified in the custody agreement, which include closing of the Property and the milestones summarized in Exhibit G.
+12.2  The Merit Open will be held regardless of the number of entrants. There is no minimum registration threshold.
+12.3  Refunds. Registration Fees are refunded in full, including any processing fees, only if the Merit Open is cancelled under Section 12.4. An entrant who is disqualified, who withdraws, who fails to participate in a round, or who is eliminated on score is not entitled to a refund.
+12.4  Cancellation events. Sponsor may cancel the Merit Open only if: (a) a court, regulator, or change in law prohibits it; (b) the Property is destroyed, condemned, or becomes impossible to convey and Section 13.3 does not apply; (c) a platform security failure makes fair administration impossible and cannot be remedied under Section 8.8; or (d) fraud or tampering affecting the Merit Open as a whole is discovered. On cancellation, all Registration Fees are refunded within [30] days to the original payment method, and Sponsor will publish notice of the cancellation and the reason.
+12.5  Chargebacks. Initiating a chargeback or payment dispute for an Registration Fee, other than for actual unauthorized use of a payment method, results in disqualification.
+Counsel note: Custody form, refund timing, treatment of processing fees on cancellation, and whether cancellation events must be narrower are all pending counsel review.
+13. Changes to Rules and Unavailability of the Property
+13.1  After the Registration Period opens, Sponsor will not change the Registration Fee, the Property, the Cash Component, the round formats, the scoring or advancement rules, the eligibility rules, or the round dates, except as stated in this Section 13.
+13.2  Sponsor may correct a clerical error, or make a change required by law or by a regulator, by posting a revised version with a new hash and notifying all entrants by email. Any such change will not disadvantage any entrant relative to any other entrant.
+13.3  If the Property is damaged, destroyed, condemned, or otherwise cannot be conveyed before closing, [Sponsor will (a) restore the Property to substantially its described condition before closing at Sponsor's cost, or (b) if restoration is not practicable, cancel the Merit Open under Section 12.4 and refund all Registration Fees] [ALTERNATIVE: award a substitute property or cash of equal or greater value, if counsel approves].
+13.4  Round dates may be moved only for a verified technical failure under Section 8.8, a compromised form under Section 8.9, or a force majeure event, and only by notice to all entrants with at least [X] days' notice of the new date.
+14. Publicity, Privacy, and Public Audit Summary
+14.1  Except where prohibited by law, acceptance of the Grand Prize constitutes permission for Sponsor to use the winner's name, city and state, likeness, and statements for promotional purposes without further compensation. [Sponsor will not publish the Property address in connection with the winner's name without the winner's consent.]
+14.2  Personal information is collected and used as described in the Privacy Policy at [URL], including for identity verification, proctoring, integrity screening, tax reporting, and legal compliance.
+14.3  Within [X] days after closing, the Administrator will publish at [URL] a summary including the number of completed registrations by state, the number of entrants advancing from each round, the number of integrity flags and their dispositions, the winner's certified score, and the winner's name and city and state [subject to the winner's consent where required by law]. Sponsor will also provide a winner list on request to [ADDRESS] for [X] months after closing.
+15. General Conditions
+15.1  Release. By registering, you release and hold harmless Sponsor, Property Owner, Administrator, Custodian, and their respective affiliates, officers, employees, and agents from any claim arising from participation in the Merit Open or acceptance, possession, or use of the Grand Prize, except for claims arising from their fraud, willful misconduct, or failure to award the Grand Prize as required by these Rules.
+15.2  Limitation of liability. To the fullest extent permitted by law, the total liability of the released parties to any entrant arising from the Merit Open shall not exceed the Registration Fee paid by that entrant, except with respect to the winner's right to receive the Grand Prize under these Rules.
+15.3  Sponsor is not responsible for lost, late, incomplete, or misdirected registrations, or for failures of an entrant's hardware, software, or connectivity.
+15.4  Governing law. These Rules are governed by the laws of [STATE], without regard to conflict-of-law principles, and by applicable federal law.
+15.5  Severability. If any provision is held unenforceable, the remaining provisions remain in effect, and the unenforceable provision is modified to the minimum extent necessary to be enforceable while preserving the intent that no element of chance be introduced into the Merit Open.
+15.6  Entire agreement. These Rules, including Exhibits A through G, and the Terms and Privacy Policy, constitute the entire agreement between you and Sponsor regarding the Merit Open.
+15.7  Contact. Questions about the Merit Open: [EMAIL]. Written correspondence: [ADDRESS].
+Exhibits (to be completed)
+	•	Exhibit A – Legal description of the Property
+	•	Exhibit B – Included and excluded fixtures, personal property, and assignable warranties
+	•	Exhibit C – Permitted exceptions of record
+	•	Exhibit D – Allocation of closing costs and prorations
+	•	Exhibit E – Integrity review, technical-failure verification, and dispute procedure
+	•	Exhibit F – Winner affidavit, prize acceptance, tax and real-estate disclosure acknowledgments, publicity release
+	•	Exhibit G – Custody agreement summary and release events
