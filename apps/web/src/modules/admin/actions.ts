@@ -11,6 +11,7 @@ const str = (fd: FormData, k: string) => String(fd.get(k) ?? '').trim();
 const num = (fd: FormData, k: string) => { const v = Number(str(fd, k)); return Number.isFinite(v) ? v : null; };
 const date = (fd: FormData, k: string) => { const v = str(fd, k); return v ? new Date(v) : null; };
 function fail(path: string, msg: string): never { redirect(`${path}${path.includes('?') ? '&' : '?'}error=${encodeURIComponent(msg)}`); }
+const jsonArray = (fd: FormData, k: string) => { const v = str(fd, k) || '[]'; try { const parsed = JSON.parse(v); return Array.isArray(parsed) ? JSON.stringify(parsed) : '[]'; } catch { return '[]'; } };
 const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
 export async function savePropertyAction(formData: FormData) {
@@ -28,6 +29,14 @@ export async function savePropertyAction(formData: FormData) {
     includedItemsJson: JSON.stringify(str(formData, 'includedItems').split('\n').map((x) => x.trim()).filter(Boolean)),
     excludedItemsJson: JSON.stringify(str(formData, 'excludedItems').split('\n').map((x) => x.trim()).filter(Boolean)),
     disclosuresPackUrl: str(formData, 'disclosuresPackUrl') || null, status: str(formData, 'status') || 'draft',
+    county: str(formData, 'county') || null, latitude: num(formData, 'latitude'), longitude: num(formData, 'longitude'), planSetKey: str(formData, 'planSetKey') || null,
+    appraisalReportUrl: str(formData, 'appraisalReportUrl') || null, propertyType: str(formData, 'propertyType') || null, stories: num(formData, 'stories'), garageSpaces: num(formData, 'garageSpaces'), fireplaces: num(formData, 'fireplaces'),
+    heating: str(formData, 'heating') || null, cooling: str(formData, 'cooling') || null, roof: str(formData, 'roof') || null, exterior: str(formData, 'exterior') || null, foundation: str(formData, 'foundation') || null,
+    waterSource: str(formData, 'waterSource') || null, sewer: str(formData, 'sewer') || null, floodZone: str(formData, 'floodZone') || null, lotDimensions: str(formData, 'lotDimensions') || null, parking: str(formData, 'parking') || null,
+    parcelNumber: str(formData, 'parcelNumber') || null, zoning: str(formData, 'zoning') || null, schoolDistrict: str(formData, 'schoolDistrict') || null,
+    taxAnnualCents: num(formData, 'taxAnnual') !== null ? Math.round(num(formData, 'taxAnnual')! * 100) : null, insuranceAnnualCents: num(formData, 'insuranceAnnual') !== null ? Math.round(num(formData, 'insuranceAnnual')! * 100) : null,
+    hoaMonthlyCents: num(formData, 'hoaMonthly') !== null ? Math.round(num(formData, 'hoaMonthly')! * 100) : null, utilitiesMonthlyCents: num(formData, 'utilitiesMonthly') !== null ? Math.round(num(formData, 'utilitiesMonthly')! * 100) : null,
+    factsApprovedAt: date(formData, 'factsApprovedAt'), nearbyJson: jsonArray(formData, 'nearbyJson'), anchorsJson: jsonArray(formData, 'anchorsJson'), historyJson: jsonArray(formData, 'historyJson'),
   };
   const before = id ? await db.property.findUnique({ where: { id } }) : null;
   const row = id ? await db.property.update({ where: { id }, data }) : await db.property.create({ data });

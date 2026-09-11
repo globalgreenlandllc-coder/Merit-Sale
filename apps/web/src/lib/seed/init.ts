@@ -26,3 +26,23 @@ export async function initializeDatabase(db: PrismaClient, sealKey: string): Pro
   const counts = await runSeed(db, sealKey);
   return { statements: statements.length, counts };
 }
+
+const DUPLICATE_CODES = new Set(['42P07', '42710', '42P06', '42701', '23505']);
+
+/**
+ * Apply the checked-in DDL to an existing database, creating only what is missing.
+ * Statements whose objects already exist are skipped (duplicate-object errors are ignored),
+ * so this never alters or drops anything that is already there.
+ */
+export async function ensureSchema(db: PrismaClient): Promise<{ applied: number; skipped: number; failed: string[] }> {
+  let applied = 0, skipped = 0; const failed: string[] = [];
+  for (const st of ddlStatements()) {
+    try { await db.$executeRawUnsafe(st); applied++; }
+    catch (e) {
+      const code = (e as { meta?: { code?: string } })?.meta?.code ?? (e as { code?: string })?.code ?? '';
+      const msg = e instanceof Error ? e.message : String(e);
+      if (DUPLICATE_CODES.has(String(code)) || /already exists/i.test(msg)) skipped++; else failed.push(`${st.slice(0, 60)}… → ${msg.split('\n')[0]}`);
+    }
+  }
+  return { applied, skipped, failed };
+}

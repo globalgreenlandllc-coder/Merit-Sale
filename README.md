@@ -14,9 +14,15 @@ npm test             # golden tests for scoring, rules-config, items
 
 Requires Node 20+. No external keys are needed: payments, identity verification, sanctions, and proctoring run through mock adapters until vendor keys are set in `apps/web/.env` (see `.env.example`).
 
+### Signing in
+
+Production uses passwordless one-time codes: a person enters their email, receives a six-digit code (Resend delivers it when `RESEND_API_KEY` is set; otherwise the code is written to the server log and the page says so), and signs in. Staff roles are never self-assigned: the comma-separated lists `PLATFORM_ADMIN_EMAILS`, `ADMINISTRATOR_EMAILS`, `AUDITOR_EMAILS`, and `ITEM_AUTHOR_EMAILS` grant roles at sign-in. Codes expire in ten minutes, allow five attempts, and are limited to five per address per hour.
+
+Local development defaults to demo mode (`AUTH_MODE=demo`): the code is shown on the page, and the seeded personas below appear as one-click buttons. Personas can be enabled on a deployment with `AUTH_DEMO_PERSONAS=true`, which is insecure and only for a demo.
+
 ### Development personas
 
-The local auth provider is active. Open `/sign-in` and click a persona, or enter any email to create a fresh registrant.
+In demo mode, open `/sign-in` and click a persona, or enter any email to create a fresh registrant.
 
 | Persona | Email | Realm |
 |---|---|---|
@@ -27,6 +33,16 @@ The local auth provider is active. Open `/sign-in` and click a persona, or enter
 | Item Author | `author@items.test` | Sealed authoring workspace |
 
 Realms are separate: an admin cannot enter the Administrator console and vice versa. No role can both see answer keys and modify scores.
+
+### Where people track the event
+
+- **Event board** at `/opens/<slug>/status`: the stage the Merit Open is in, what happens next and when, public counts from certified lists (registered, qualified, advanced), and every certification with its hash. Signed-in registrants see their own line per stage.
+- **Account** at `/account`: the same tracker per registration, a "Now" panel for the open round with the entry button, scores once posted, results, and the mandatory notices (also delivered by email when Resend is configured).
+- **Listing** at `/opens/<slug>`: a compact tracker beside the schedule, and the docket links to the board.
+
+### Listing intake for admins
+
+`/admin/listings/new` creates a property and its Merit Open in one pass: address geocoding with a map preview (OpenStreetMap Nominatim), facts, appraisal and cost to hold, the listing number, a proposed round schedule at sane hours from the registration close, primary and reserve forms for every round, and a draft ruleset from the counsel template. Each Merit Open then shows a **readiness list**: every item still needed before the Administrator can lock, with the owner (admin, author, counsel, administrator) and a link to where it gets done. Photography is uploaded on the property page and published after counsel approval.
 
 ### A ten-minute tour
 
@@ -97,8 +113,8 @@ Each Merit Open is presented as a monograph of record rather than a portal listi
    export ADMINISTRATOR_SEAL_KEY="…"               # the same key set in Vercel
    npm run db:push && npm run db:seed
    ```
-   **`/api/health`** reports which variables the running deployment sees (never their values) and a live database round-trip.
-3. **Environment variables.** `DATABASE_URL`, `SESSION_SECRET` (long random string), `ADMINISTRATOR_SEAL_KEY` (`npm run keys:generate`; must match the key used when the seed sealed the packages, so seed with the same value), `NEXT_PUBLIC_SITE_URL` (the deployment URL), `PAYMENTS_PROVIDER=mock` until Stripe keys exist. Leave `GEO_DEV_STATE` unset: Vercel supplies the visitor's region header, so eligibility uses real location.
+   **`/api/health`** reports which variables the running deployment sees (never their values) and a live database round-trip. After a code update that adds tables or indexes, `/api/setup` offers **Apply schema updates**, which creates only what is missing.
+3. **Environment variables.** `DATABASE_URL`, `SESSION_SECRET` (long random string), `ADMINISTRATOR_SEAL_KEY` (`npm run keys:generate`; must match the key used when the seed sealed the packages, so seed with the same value), `NEXT_PUBLIC_SITE_URL` (the deployment URL), `PAYMENTS_PROVIDER=mock` until Stripe keys exist, `PLATFORM_ADMIN_EMAILS` with your own address (plus `ADMINISTRATOR_EMAILS` for the independent administrator), and `RESEND_API_KEY` so sign-in codes and notices are delivered. Leave `GEO_DEV_STATE` unset: Vercel supplies the visitor's region header, so eligibility uses real location.
 4. **Photography.** Add a Vercel Blob store to the project; its `BLOB_READ_WRITE_TOKEN` switches uploads to object storage (the serverless filesystem is read-only).
 5. **Redeploy.** Every push to `main` deploys.
 

@@ -535,6 +535,20 @@ model Notification {
   sentAt      DateTime @default(now())
 }
 
+/// One-time sign-in codes for passwordless email sign-in. Codes are stored hashed.
+model LoginCode {
+  id         String    @id @default(cuid())
+  email      String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  ip         String?
+  createdAt  DateTime  @default(now())
+
+  @@index([email, createdAt])
+}
+
 model SiteSetting {
   key       String   @id
   valueJson String

@@ -21,6 +21,8 @@ import { EligibilityChecker } from '@/components/site/EligibilityChecker';
 import { ScheduleTimeline } from '@/components/site/ScheduleTimeline';
 import { HashVerifier } from '@/components/site/HashVerifier';
 import { DistancesLedger, FactSheet, FactsStrip, NearbyList, OwnershipCosts, PropertyRecord, TitleLedger } from '@/components/site/ListingSections';
+import { StageTracker } from '@/components/site/StageTracker';
+import { myStage, stageCounts } from '@/modules/meritopens/status';
 import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/auth/session';
@@ -51,6 +53,7 @@ export default async function OpenPage({ params }: { params: Promise<{ slug: str
   const p = open.property; const rs = latestRuleset(open); const cfg = parseConfig(rs); const states = eligibleStates(open);
   const vendor = (kind: string) => vendors.find((v) => v.kind === kind);
   const myReg = session ? await db.registration.findUnique({ where: { userId_meritOpenId: { userId: session.userId, meritOpenId: open.id } } }) : null;
+  const [stage, mine] = await Promise.all([stageCounts(open), myStage(open, session?.userId ?? null)]);
   const practice = open.isPractice;
   const registering = open.status === 'registration'; const reservation = open.status === 'reservation'; const owned = p.titleStatus === 'owned'; const locked = !!open.rulesHash;
   const titleVerified = owned && !!p.countyRecorderUrl && !!p.speEntityName && !p.speEntityName.startsWith('[');
@@ -196,7 +199,7 @@ export default async function OpenPage({ params }: { params: Promise<{ slug: str
 
       <section className="border-t hair bg-parchment/60"><Container className="grid gap-12 py-16 lg:grid-cols-2">
         <div><SectionHeading index={idx()} label="Who can register" title="Adults in eligible states. Verified." /><p className="mt-4 text-[14px] text-graphite">Adults {cfg?.minimumAge ?? 18}+; legal residents of {states.join(', ') || '[state list]'}; not employees, contractors, or family of the platform, the administrator, the custodian, or the seller. We verify identity and location; if you’re outside an eligible state, please don’t register — we’d have to refund and remove you.</p><div className="mt-6"><EligibilityChecker eligibleStates={states} minimumAge={cfg?.minimumAge ?? 18} /></div></div>
-        <div><Plate as="h3">The schedule</Plate><div className="mt-5"><ScheduleTimeline events={schedule} title={open.name} officialTz={tz} provisional={!locked} /></div><p className="mt-4 text-[13px] text-graphite">Result certified within {cfg?.certificationDays ?? '[—]'} days{practice ? '' : `; closing within ${cfg?.closingDays ?? '[—]'} days`}.</p></div>
+        <div><div className="flex items-baseline justify-between"><Plate as="h3" className="flex-1">Where the event stands</Plate><Link href={`/opens/${slug}/status`} className="ml-4 shrink-0 text-[13px] link-rule">Event board →</Link></div><div className="mt-5"><StageTracker open={open} counts={stage} mine={mine} compact /></div><Plate as="h3" className="mt-10">The schedule</Plate><div className="mt-5"><ScheduleTimeline events={schedule} title={open.name} officialTz={tz} provisional={!locked} /></div><p className="mt-4 text-[13px] text-graphite">Result certified within {cfg?.certificationDays ?? '[—]'} days{practice ? '' : `; closing within ${cfg?.closingDays ?? '[—]'} days`}.</p></div>
       </Container></section>
 
       {disclosures.length ? (<section className="border-t hair bg-linen/40"><Container className="py-12">{disclosures.map((d) => <div key={d.templateKey} className="max-w-3xl"><Plate as="h2">Required disclosure · {d.templateKey}</Plate><Ledger className="mt-4" rows={[{ term: 'Maximum rounds', detail: String(d.maxRounds) }, { term: 'Maximum cost to participate', detail: money(d.maxCostCents) }, { term: 'Later rounds', detail: d.laterRoundsHarder ? 'Later rounds are more difficult than earlier rounds.' : 'All rounds are of comparable difficulty.' }, { term: 'End date', detail: fmtDate(d.endDate) }, { term: 'Tie method', detail: d.tieMethod }, { term: 'Prior events', detail: d.priorEventStats }]} /></div>)}</Container></section>) : null}

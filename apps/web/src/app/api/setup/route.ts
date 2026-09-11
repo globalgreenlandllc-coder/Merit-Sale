@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { db } from '@/lib/db';
-import { initializeDatabase, tablesExist } from '@/lib/seed/init';
+import { ensureSchema, initializeDatabase, tablesExist } from '@/lib/seed/init';
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300;
@@ -19,7 +19,7 @@ export async function GET() {
   const envKey = process.env.ADMINISTRATOR_SEAL_KEY ?? '';
   if (ready) {
     const [opens, users] = await Promise.all([db.meritOpen.count(), db.user.count()]);
-    return page('Database is initialised', `<p>${opens} Merit Opens · ${users} users. Nothing to do.</p><p><a href="/">Open the site →</a> · <a href="/api/health">Health report</a></p>`);
+    return page('Database is initialised', `<p>${opens} Merit Opens · ${users} users.</p><form method="post"><input type="hidden" name="action" value="update"><p>After a code update that adds tables or indexes, apply the schema changes here. Only missing objects are created; nothing is altered or dropped.</p><button style="font:600 15px ui-sans-serif,system-ui;background:#0f1613;color:#faf8f2;border:0;padding:12px 20px;border-radius:3px;cursor:pointer">Apply schema updates</button></form><p><a href="/">Open the site →</a> · <a href="/api/health">Health report</a></p>`);
   }
   const keyField = envKey.length === 64
     ? `<p>Seal key: set on this deployment.</p>`
@@ -31,6 +31,10 @@ export async function POST(req: Request) {
   const started = Date.now();
   try {
     const form = await req.formData().catch(() => null);
+    if (String(form?.get('action') ?? '') === 'update') {
+      const r = await ensureSchema(db);
+      return page(r.failed.length ? 'Schema update finished with errors' : 'Schema is current', `<p>${r.applied} objects created · ${r.skipped} already existed.</p>${r.failed.length ? `<pre style="white-space:pre-wrap;color:#a4522c;font:12px ui-monospace,monospace">${esc(r.failed.join('\n'))}</pre>` : ''}<p><a href="/api/setup">Back</a> · <a href="/api/health">Health</a></p>`);
+    }
     const envKey = process.env.ADMINISTRATOR_SEAL_KEY ?? '';
     const sealKey = envKey.length === 64 ? envKey : String(form?.get('sealKey') ?? '').trim().toLowerCase();
     if (!/^[0-9a-f]{64}$/.test(sealKey)) return page('Seal key required', `<p style="color:#a4522c">Enter a 64-character hexadecimal seal key. <a href="/api/setup">Back</a></p>`);

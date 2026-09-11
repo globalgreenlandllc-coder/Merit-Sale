@@ -1,5 +1,7 @@
 import { db } from '@/lib/db';
 import { usingBlob } from '@/lib/uploads';
+import { authMode, demoPersonasEnabled, staffListsConfigured } from '@/lib/auth/mode';
+import { emailProviderName } from '@/lib/providers/email';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,6 +19,7 @@ export async function GET() {
     payments: process.env.PAYMENTS_PROVIDER ?? 'mock',
     commit: (process.env.VERCEL_GIT_COMMIT_SHA ?? '').slice(0, 7) || null,
     node: process.version,
+    auth: { mode: authMode(), emailDelivery: emailProviderName(), staffListed: staffListsConfigured(), demoPersonas: demoPersonasEnabled() },
   };
   try {
     const [opens, users] = await Promise.all([db.meritOpen.count(), db.user.count()]);

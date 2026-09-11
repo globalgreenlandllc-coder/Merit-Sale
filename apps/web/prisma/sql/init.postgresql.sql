@@ -473,6 +473,20 @@ CREATE TABLE "Notification" (
 );
 
 -- CreateTable
+CREATE TABLE "LoginCode" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "codeHash" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "attempts" INTEGER NOT NULL DEFAULT 0,
+    "consumedAt" TIMESTAMP(3),
+    "ip" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "LoginCode_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "SiteSetting" (
     "key" TEXT NOT NULL,
     "valueJson" TEXT NOT NULL,
@@ -534,6 +548,9 @@ CREATE UNIQUE INDEX "Advancement_roundId_registrationId_key" ON "Advancement"("r
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Accommodation_userId_meritOpenId_key" ON "Accommodation"("userId", "meritOpenId");
+
+-- CreateIndex
+CREATE INDEX "LoginCode_email_createdAt_idx" ON "LoginCode"("email", "createdAt");
 
 -- AddForeignKey
 ALTER TABLE "MeritOpen" ADD CONSTRAINT "MeritOpen_propertyId_fkey" FOREIGN KEY ("propertyId") REFERENCES "Property"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

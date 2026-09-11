@@ -1,5 +1,6 @@
 import 'server-only';
 import { db } from '@/lib/db';
+import { sendEmail } from './email';
 
 /**
  * Legal notices are mandatory sends and are logged per user (spec §6). Marketing is
@@ -21,6 +22,9 @@ export async function broadcastNotice(args: { meritOpenId: string; subject: stri
   return users.size;
 }
 
-async function deliver(_notificationId: string) {
-  // transactional email/SMS provider goes here; in local mode notices are visible in the account inbox
+/** Mandatory notices go by email when a provider is configured; every notice is always visible in the account inbox. */
+async function deliver(notificationId: string) {
+  const n = await db.notification.findUnique({ where: { id: notificationId }, include: { user: { select: { email: true } } } });
+  if (!n || n.user.email.endsWith('.test') || !process.env.RESEND_API_KEY) return;
+  await sendEmail({ to: n.user.email, subject: `Earn the Keys — ${n.subject}`, text: `${n.body}\n\nThis notice is also in your account: ${process.env.NEXT_PUBLIC_SITE_URL ?? ''}/account` });
 }

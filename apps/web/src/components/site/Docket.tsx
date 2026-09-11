@@ -35,7 +35,7 @@ export function Docket({ open, myReg, custodian, listingNo, states, inline = fal
         {rows.map(([k, v]) => <div key={k} className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 border-b hair py-2 text-[13px]"><dt className="plate whitespace-nowrap pt-0.5">{k}</dt><dd className="min-w-0 text-ink">{v}</dd></div>)}
       </dl>
       <ButtonLink href={cta.href} size="lg" className="mt-5 w-full">{cta.label}</ButtonLink>
-      <Link href={`/opens/${open.slug}/rules`} className="mt-3 block text-center text-[13px] link-rule">Official Rules</Link>
+      <div className="mt-3 flex justify-center gap-4 text-[13px]"><Link href={`/opens/${open.slug}/status`} className="link-rule">Event board</Link><Link href={`/opens/${open.slug}/rules`} className="link-rule">Official Rules</Link></div>
       <p className="mt-3 text-[12px] leading-relaxed text-graphite">{locked ? 'Fixed fee, fixed dates. Refundable only if the Merit Open is cancelled, then in full.' : 'Dates and fee become fixed when the Rules lock, before registration opens.'}</p>
     </div>
   );

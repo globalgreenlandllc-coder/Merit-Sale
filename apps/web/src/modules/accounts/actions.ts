@@ -5,18 +5,21 @@ import { audit } from '@/lib/audit';
 import { createSession, destroySession, getSession } from '@/lib/auth/session';
 import { sendNotice } from '@/lib/providers/notify';
 import { getOpenBySlug } from '@/modules/meritopens/queries';
+import { authMode, demoPersonasEnabled } from '@/lib/auth/mode';
 
 function safeNext(v: FormDataEntryValue | null, fallback = '/account') {
   const s = typeof v === 'string' ? v : '';
   return s.startsWith('/') && !s.startsWith('//') ? s : fallback;
 }
 
-/** Local provider sign-in: an existing user by email, or a new registrant. */
+/** Demo sign-in (development only): an existing user by email, or a new registrant. Staff personas require AUTH_DEMO_PERSONAS. */
 export async function signInLocal(formData: FormData) {
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const next = safeNext(formData.get('next'));
+  if (authMode() !== 'demo' && !demoPersonasEnabled()) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect(`/sign-in?error=email&next=${encodeURIComponent(next)}`);
   let user = await db.user.findUnique({ where: { email } });
+  if (user && user.role !== 'registrant' && !demoPersonasEnabled()) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
   if (!user) {
     user = await db.user.create({ data: { email, role: 'registrant' } });
     await audit({ actorId: user.id, actorRole: 'registrant', action: 'account.create', objectType: 'User', objectId: user.id });

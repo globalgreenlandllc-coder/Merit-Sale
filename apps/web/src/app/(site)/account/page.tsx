@@ -11,6 +11,8 @@ import { requireSession } from '@/lib/auth/guards';
 import { signOut } from '@/modules/accounts/actions';
 import { fmtDateTime, fmtDuration, money, roundLabel } from '@/lib/format';
 import { openInclude } from '@/modules/meritopens/queries';
+import { StageTracker } from '@/components/site/StageTracker';
+import { myStage, stageCounts } from '@/modules/meritopens/status';
 
 export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Your account' };
@@ -37,8 +39,9 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       <h2 className="plate mt-14">Registrations</h2>
       {!registrations.length && <p className="mt-4 text-[15px] text-slate">No registrations yet. <Link href="/opens" className="link-rule">See Merit Opens →</Link></p>}
       <div className="mt-4 space-y-8">
-        {registrations.map((r) => {
+        {await Promise.all(registrations.map(async (r) => {
           const open = r.meritOpen;
+          const [counts, mine] = await Promise.all([stageCounts(open), myStage(open, user.id)]);
           const activeRound = open.rounds.find((rd) => rd.number === open.status || (open.status === 'tiebreak' && rd.number.startsWith('tiebreak') && rd.status === 'open'));
           const myAttemptFor = (roundId: string) => r.attempts.find((a) => a.roundId === roundId);
           const advFor = (roundId: string) => r.advancements.find((a) => a.roundId === roundId);
@@ -59,7 +62,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                   <ButtonLink href={`/test/${open.slug}/${activeRound.number}`} variant="brass" size="lg">{myAttemptFor(activeRound.id) ? 'Open your attempt' : 'Enter the round'}</ButtonLink>
                 </div>
               )}
-              <h3 className="plate mt-8">Rounds</h3>
+              <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]"><div><h3 className="plate">Where the event stands</h3><div className="mt-4"><StageTracker open={open} counts={counts} mine={mine} compact /></div><Link href={`/opens/${open.slug}/status`} className="mt-3 inline-block text-[13px] link-rule">Event board →</Link></div><div>
+              <h3 className="plate">Rounds</h3>
               <Table className="mt-3" dense head={['Round', 'When', 'Your attempt', 'Score', 'Result']}>
                 {open.rounds.filter((rd) => !rd.number.startsWith('tiebreak') || myAttemptFor(rd.id) || advFor(rd.id)).map((rd) => {
                   const a = myAttemptFor(rd.id); const adv = advFor(rd.id);
@@ -73,7 +77,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
                     </Tr>
                   );
                 })}
-              </Table>
+              </Table></div></div>
               <div className="mt-6 flex flex-wrap gap-2">
                 {open.rounds.some((rd) => rd.scoresPostedAt && rd.disputeDeadlineAt && rd.disputeDeadlineAt.getTime() > Date.now()) && <ButtonLink href={`/account/opens/${open.slug}/challenge`} variant="secondary" size="sm">Challenge your score</ButtonLink>}
                 <ButtonLink href={`/account/opens/${open.slug}/technical`} variant="secondary" size="sm">Report a technical failure</ButtonLink>
@@ -86,7 +90,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
               )}
             </section>
           );
-        })}
+        }))}
       </div>
 
       {reservations.length > 0 && (<><h2 className="plate mt-14">Reservations</h2><ul className="mt-4 border-t hair">{reservations.map((rv) => <li key={rv.id} className="flex flex-wrap items-center justify-between gap-2 border-b hair py-3"><Link href={`/opens/${rv.meritOpen.slug}`} className="link-rule">{rv.meritOpen.name}</Link><span className="text-[13px] text-graphite">free · non-binding · {fmtDateTime(rv.createdAt)}</span></li>)}</ul></>)}

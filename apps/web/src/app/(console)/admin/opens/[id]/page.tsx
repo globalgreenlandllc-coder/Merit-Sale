@@ -10,15 +10,25 @@ import { db } from '@/lib/db';
 import { getOpenById } from '@/modules/meritopens/queries';
 import { adminTransitionAction, createFormAction } from '@/modules/admin/actions';
 import { fmtDateTime, roundLabel } from '@/lib/format';
+import { readiness } from '@/modules/meritopens/readiness';
+import { Notice } from '@/components/ui/Notice';
 export const dynamic = 'force-dynamic';
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { id } = await params; const sp = await searchParams;
   const o = await getOpenById(id);
   if (!o) notFound();
   const properties = await db.property.findMany({ orderBy: { name: 'asc' } });
+  const ready = await readiness(o);
   return (<>
     <PageHead label="Merit Open" title={o.name} actions={<><ButtonLink href={`/admin/opens/${id}/rules`} variant="secondary" size="sm">Ruleset</ButtonLink><ButtonLink href={`/admin/opens/${id}/rounds`} variant="secondary" size="sm">Rounds</ButtonLink><ButtonLink href={`/opens/${o.slug}`} variant="ghost" size="sm">Public page →</ButtonLink></>} />
     <ErrorBanner sp={sp} />
+    {sp.created && <Notice className="mt-5" tone="verify" title="Listing created">Property, Merit Open, rounds, forms, and a draft ruleset are in place. Work down the readiness list, then the Administrator locks.</Notice>}
+    <Card className="mt-6" title={`Readiness · ${ready.ok} of ${ready.total}${ready.locked ? ' · locked' : ''}`}>
+      <div className="mb-3 h-1.5 w-full overflow-hidden rounded-full bg-linen"><div className="h-full bg-verify" style={{ width: `${Math.round((ready.ok / Math.max(1, ready.total)) * 100)}%` }} /></div>
+      <ul className="grid gap-x-8 gap-y-1.5 md:grid-cols-2">
+        {ready.items.map((it) => <li key={it.key} className="flex items-start gap-2 text-[13.5px]"><span className={`mt-1 size-2.5 shrink-0 rounded-full ${it.ok ? 'bg-verify' : 'bg-amber'}`} aria-hidden /><span className="min-w-0"><Link href={it.href} className={`link-rule ${it.ok ? 'text-ink' : 'text-ink'}`}>{it.label}</Link><span className="ml-2 plate">{it.owner}</span><span className="block text-[12.5px] text-graphite">{it.detail}</span></span></li>)}
+      </ul>
+    </Card>
     <div className="mt-6 grid gap-6 lg:grid-cols-[2fr_1fr]">
       <Card title="Configuration"><OpenForm o={o} properties={properties} /></Card>
       <div className="space-y-6">
