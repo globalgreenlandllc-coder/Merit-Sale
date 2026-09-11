@@ -4,6 +4,7 @@ const config: NextConfig = {
   transpilePackages: ['@etk/scoring', '@etk/rules-config', '@etk/items'],
   serverExternalPackages: ['@prisma/client', 'prisma'],
   poweredByHeader: false,
+  outputFileTracingIncludes: { '/api/setup': ['./prisma/sql/**'] },
   async headers() {
     return [
       {

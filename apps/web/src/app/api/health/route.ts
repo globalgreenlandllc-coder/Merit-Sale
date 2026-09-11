@@ -23,6 +23,7 @@ export async function GET() {
     return Response.json({ ok: true, config, database: { reachable: true, meritOpens: opens, users } }, { headers: { 'cache-control': 'no-store' } });
   } catch (e) {
     const message = e instanceof Error ? redact(e.message).split('\n').filter((l) => l.trim()).slice(0, 4).join(' ') : 'unknown';
-    return Response.json({ ok: false, config, database: { reachable: false, error: message } }, { status: 503, headers: { 'cache-control': 'no-store' } });
+    const setup = /does not exist/.test(message) ? 'Database is empty: open /api/setup to initialise it.' : undefined;
+    return Response.json({ ok: false, config, database: { reachable: false, error: message }, setup }, { status: 503, headers: { 'cache-control': 'no-store' } });
   }
 }
