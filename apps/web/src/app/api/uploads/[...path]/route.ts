@@ -8,12 +8,12 @@ const TYPES: Record<string, string> = { '.jpg': 'image/jpeg', '.jpeg': 'image/jp
 export async function GET(_req: Request, { params }: { params: Promise<{ path: string[] }> }) {
   const { path } = await params;
   const root = uploadsRoot();
-  const target = resolve(root, ...path.map((p) => p.replace(/[^a-z0-9._-]/gi, '')));
+  const target = resolve(/* turbopackIgnore: true */ root, ...path.map((p) => p.replace(/[^a-z0-9._-]/gi, '')));
   if (!target.startsWith(root + sep)) return new Response('Not found', { status: 404 });
   const type = TYPES[extname(target).toLowerCase()];
   if (!type) return new Response('Not found', { status: 404 });
   try {
-    const [bytes, info] = await Promise.all([readFile(target), stat(target)]);
+    const [bytes, info] = await Promise.all([readFile(/* turbopackIgnore: true */ target), stat(target)]);
     return new Response(bytes, { headers: { 'content-type': type, 'content-length': String(info.size), 'cache-control': 'public, max-age=31536000, immutable' } });
   } catch { return new Response('Not found', { status: 404 }); }
 }

@@ -7,7 +7,8 @@ import { basename, join, resolve, sep } from 'node:path';
  * outside `public`) and are served by /api/uploads. The filesystem on Vercel is read-only.
  */
 export function uploadsRoot(): string {
-  return resolve(process.env.UPLOADS_DIR ?? resolve(process.cwd(), 'uploads'));
+  // statically scoped default so Next does not trace the whole project; the env override opts out of tracing
+  return process.env.UPLOADS_DIR ? resolve(/* turbopackIgnore: true */ process.env.UPLOADS_DIR) : join(process.cwd(), 'uploads');
 }
 
 export const usingBlob = () => !!process.env.BLOB_READ_WRITE_TOKEN;
@@ -18,7 +19,7 @@ export async function storePhoto(propertyId: string, name: string, bytes: Buffer
     const blob = await put(`properties/${propertyId}/${name}`, bytes, { access: 'public', contentType, addRandomSuffix: false });
     return blob.url;
   }
-  const dir = join(uploadsRoot(), propertyId);
+  const dir = join(/* turbopackIgnore: true */ uploadsRoot(), propertyId);
   await mkdir(dir, { recursive: true });
   await writeFile(join(dir, name), bytes);
   return `/api/uploads/${propertyId}/${name}`;
@@ -32,7 +33,7 @@ export async function removePhoto(propertyId: string, url: string): Promise<void
     await del(url).catch(() => undefined);
     return;
   }
-  const base = resolve(uploadsRoot(), propertyId);
+  const base = resolve(/* turbopackIgnore: true */ uploadsRoot(), propertyId);
   const target = resolve(base, basename(url));
   if (!target.startsWith(base + sep)) return;
   await unlink(target).catch(() => undefined);
