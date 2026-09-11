@@ -92,8 +92,10 @@ Each Merit Open is presented as a monograph of record rather than a portal listi
 2. **Database.** Create a Postgres database (Neon through the Vercel Marketplace, Vercel Postgres, or Supabase) and set `DATABASE_URL` on the project. Any non-`file:` URL selects the PostgreSQL schema automatically. Then create the tables and demo data from your machine against that database:
    ```bash
    cd apps/web
-   DATABASE_URL="postgresql://…" npm run db:push
-   DATABASE_URL="postgresql://…" npm run db:seed
+   export DATABASE_URL="postgresql://…"            # pooled URL, the one the app uses
+   export DATABASE_URL_UNPOOLED="postgresql://…"   # direct URL for db push (same value if your provider has no pooler)
+   export ADMINISTRATOR_SEAL_KEY="…"               # the same key set in Vercel
+   npm run db:push && npm run db:seed
    ```
 3. **Environment variables.** `DATABASE_URL`, `SESSION_SECRET` (long random string), `ADMINISTRATOR_SEAL_KEY` (`npm run keys:generate`; must match the key used when the seed sealed the packages, so seed with the same value), `NEXT_PUBLIC_SITE_URL` (the deployment URL), `PAYMENTS_PROVIDER=mock` until Stripe keys exist. Leave `GEO_DEV_STATE` unset: Vercel supplies the visitor's region header, so eligibility uses real location.
 4. **Photography.** Add a Vercel Blob store to the project; its `BLOB_READ_WRITE_TOKEN` switches uploads to object storage (the serverless filesystem is read-only).
