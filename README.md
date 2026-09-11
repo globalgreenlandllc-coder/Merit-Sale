@@ -89,7 +89,7 @@ Each Merit Open is presented as a monograph of record rather than a portal listi
 ## Deploying to Vercel
 
 1. **Project settings.** Import the GitHub repository and set **Root Directory** to `apps/web`. Vercel detects the npm workspace and installs from the repository root. Framework preset: Next.js; the build command is the package's `npm run build` (schema selection, Prisma generate, Next build).
-2. **Database.** Create a Postgres database (Neon through the Vercel Marketplace, Vercel Postgres, or Supabase) and set `DATABASE_URL` on the project. Any non-`file:` URL selects the PostgreSQL schema automatically. Then create the tables and demo data from your machine against that database:
+2. **Database.** Connect a Postgres database to the project (Neon through Vercel's Storage tab is the quickest); it sets `DATABASE_URL` and `DATABASE_URL_UNPOOLED`. Any non-`file:` URL selects the PostgreSQL schema automatically. After the deployment with those variables is live, open **`/api/setup`** on the site and press *Initialise database*: it creates every table from the checked-in DDL (`apps/web/prisma/sql/init.postgresql.sql`) and loads the demo record. It only ever runs on an empty database. The same can be done from a machine with the connection strings:
    ```bash
    cd apps/web
    export DATABASE_URL="postgresql://…"            # pooled URL, the one the app uses
@@ -97,6 +97,7 @@ Each Merit Open is presented as a monograph of record rather than a portal listi
    export ADMINISTRATOR_SEAL_KEY="…"               # the same key set in Vercel
    npm run db:push && npm run db:seed
    ```
+   **`/api/health`** reports which variables the running deployment sees (never their values) and a live database round-trip.
 3. **Environment variables.** `DATABASE_URL`, `SESSION_SECRET` (long random string), `ADMINISTRATOR_SEAL_KEY` (`npm run keys:generate`; must match the key used when the seed sealed the packages, so seed with the same value), `NEXT_PUBLIC_SITE_URL` (the deployment URL), `PAYMENTS_PROVIDER=mock` until Stripe keys exist. Leave `GEO_DEV_STATE` unset: Vercel supplies the visitor's region header, so eligibility uses real location.
 4. **Photography.** Add a Vercel Blob store to the project; its `BLOB_READ_WRITE_TOKEN` switches uploads to object storage (the serverless filesystem is read-only).
 5. **Redeploy.** Every push to `main` deploys.
