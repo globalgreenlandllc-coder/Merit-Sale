@@ -1,8 +1,11 @@
 {
   "name": "earn-the-keys",
   "private": true,
-  "description": "Earn the Keys — the Merit Sale platform. Homes sold through paid-registration, objectively scored reasoning competitions.",
-  "workspaces": ["apps/*", "packages/*"],
+  "description": "Earn the Keys \u2014 the Merit Sale platform. Homes sold through paid-registration, objectively scored reasoning competitions.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "npm run dev -w @etk/web",
     "build": "npm run build -w @etk/web",
@@ -15,5 +18,7 @@
     "keys:generate": "node -e \"console.log('ADMINISTRATOR_SEAL_KEY=' + require('crypto').randomBytes(32).toString('hex'))\"",
     "setup": "npm install && npm run db:push && npm run db:seed"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": "22.x"
+  }
 }

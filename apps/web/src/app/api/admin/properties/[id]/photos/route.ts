@@ -1,12 +1,10 @@
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
-import { basename, join, resolve, sep } from 'node:path';
-import { randomBytes } from 'node:crypto';
+import { createHash, randomBytes } from 'node:crypto';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { audit } from '@/lib/audit';
 import { assertRole, Forbidden } from '@/lib/auth/guards';
 import { safeJson } from '@/lib/format';
-import { uploadsRoot } from '@/lib/uploads';
+import { removePhoto, storePhoto } from '@/lib/uploads';
 
 export interface PropertyPhoto { url: string; caption: string; credit: string; addedAt: string; published: boolean; sha256?: string }
 
@@ -24,14 +22,7 @@ async function photosOf(id: string) {
   return safeJson<PropertyPhoto[]>(p.photosJson, []).map((ph) => ({ ...ph, published: ph.published ?? false }));
 }
 
-/** Confine a stored photo url to this property's upload folder; returns the absolute file path or null. */
-function confinedPath(id: string, url: string): string | null {
-  const base = resolve(uploadsRoot(), id);
-  const target = resolve(base, basename(url));
-  return target.startsWith(base + sep) ? target : null;
-}
-
-/** Admin uploads property photography (multipart). Files live outside `public` and are served by /api/uploads. */
+/** Admin uploads property photography (multipart). Stored in Vercel Blob or under UPLOADS_DIR; never in `public`. */
 export const POST = guarded(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const s = await assertRole(['admin']);
   const { id } = await params;
@@ -46,16 +37,13 @@ export const POST = guarded(async (req: Request, { params }: { params: Promise<{
     if (!ALLOWED.has(f.type)) return Response.json({ error: `Unsupported type ${f.type}` }, { status: 415 });
     if (f.size > MAX_BYTES) return Response.json({ error: `${f.name} exceeds 12 MB` }, { status: 413 });
   }
-  const dir = join(uploadsRoot(), id);
-  await mkdir(dir, { recursive: true });
   const added: PropertyPhoto[] = [];
   for (const [i, f] of files.entries()) {
     const stem = f.name.replace(/\.[a-z0-9]+$/i, '').replace(/[^a-z0-9]+/gi, '-').replace(/(^-|-$)/g, '').toLowerCase().slice(0, 40) || 'photo';
     const name = `${Date.now().toString(36)}-${i}-${randomBytes(3).toString('hex')}-${stem}.${ALLOWED.get(f.type)}`;
     const bytes = Buffer.from(await f.arrayBuffer());
-    await writeFile(join(dir, name), bytes);
-    const { createHash } = await import('node:crypto');
-    added.push({ url: `/api/uploads/${id}/${name}`, caption, credit, addedAt: new Date().toISOString(), published: false, sha256: createHash('sha256').update(bytes).digest('hex') });
+    const url = await storePhoto(id, name, bytes, f.type);
+    added.push({ url, caption, credit, addedAt: new Date().toISOString(), published: false, sha256: createHash('sha256').update(bytes).digest('hex') });
   }
   const next = await db.$transaction(async (tx) => {
     const cur = safeJson<PropertyPhoto[]>((await tx.property.findUniqueOrThrow({ where: { id }, select: { photosJson: true } })).photosJson, []);
@@ -97,8 +85,7 @@ export const DELETE = guarded(async (req: Request, { params }: { params: Promise
   if (!parsed.success) return Response.json({ error: 'Bad request' }, { status: 400 });
   const { url } = parsed.data;
   if (!existing.some((p) => p.url === url)) return Response.json({ error: 'Photo not found' }, { status: 404 });
-  const target = confinedPath(id, url);
-  if (target) { try { await unlink(target); } catch { /* already gone */ } }
+  await removePhoto(id, url);
   const next = existing.filter((p) => p.url !== url);
   await db.property.update({ where: { id }, data: { photosJson: JSON.stringify(next) } });
   await audit({ actorId: s.userId, actorRole: s.role, action: 'property.photos.remove', objectType: 'Property', objectId: id, detail: { url } });

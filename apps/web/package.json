@@ -5,13 +5,14 @@
   "description": "Earn the Keys — public site, registrant test client, platform admin, and independent administrator console.",
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "node prisma/select.mjs && prisma generate && next build",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts",
-    "db:reset": "prisma db push && tsx prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "db:select": "node prisma/select.mjs",
+    "db:push": "node prisma/select.mjs && prisma db push",
+    "db:seed": "node prisma/select.mjs && tsx prisma/seed.ts",
+    "db:reset": "node prisma/select.mjs && prisma db push && tsx prisma/seed.ts",
+    "postinstall": "node prisma/select.mjs && prisma generate"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -21,6 +22,7 @@
     "@etk/rules-config": "*",
     "@etk/scoring": "*",
     "@prisma/client": "^6.19.0",
+    "@vercel/blob": "^2.8.0",
     "leaflet": "^1.9.4",
     "next": "^16.3.0",
     "react": "^19.2.0",

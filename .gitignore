@@ -9,6 +9,7 @@ coverage/
 .env.local
 .env.*.local
 apps/web/prisma/*.db
+apps/web/prisma/schema.prisma
 apps/web/prisma/*.db-journal
 apps/web/public/releases/
 apps/web/uploads/

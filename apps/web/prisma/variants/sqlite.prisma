@@ -1,5 +1,5 @@
-// Earn the Keys — data model (spec §2). SQLite for local development; switch the
-// provider to postgresql for staging/production. Status fields are strings validated
+// Earn the Keys — data model (spec §2). Variant: SQLite (local development). The active
+// schema is chosen from DATABASE_URL by prisma/select.mjs. Status fields are strings validated
 // in code (@etk/rules-config) so the schema is portable across providers.
 
 generator client {

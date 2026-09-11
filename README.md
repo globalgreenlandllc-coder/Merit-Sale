@@ -86,9 +86,22 @@ Each Merit Open is presented as a monograph of record rather than a portal listi
 - **Photography** is uploaded by the platform admin on the property page (`/admin/properties/<id>`), stored under `UPLOADS_DIR` (default `apps/web/uploads/`, ignored by git, served by `/api/uploads`), hashed on upload, and shown only once marked published after counsel approval. Published photographs lead the plate viewer; the plate set never disappears behind them.
 - **Smart tools**, all client-side and key-free: state eligibility preview, timezone-aware schedule with `.ics` export, in-browser SHA-256 verifier for released packages against every published hash, sun-and-light plate computed from coordinates with the NOAA solar equations.
 
+## Deploying to Vercel
+
+1. **Project settings.** Import the GitHub repository and set **Root Directory** to `apps/web`. Vercel detects the npm workspace and installs from the repository root. Framework preset: Next.js; the build command is the package's `npm run build` (schema selection, Prisma generate, Next build).
+2. **Database.** Create a Postgres database (Neon through the Vercel Marketplace, Vercel Postgres, or Supabase) and set `DATABASE_URL` on the project. Any non-`file:` URL selects the PostgreSQL schema automatically. Then create the tables and demo data from your machine against that database:
+   ```bash
+   cd apps/web
+   DATABASE_URL="postgresql://…" npm run db:push
+   DATABASE_URL="postgresql://…" npm run db:seed
+   ```
+3. **Environment variables.** `DATABASE_URL`, `SESSION_SECRET` (long random string), `ADMINISTRATOR_SEAL_KEY` (`npm run keys:generate`; must match the key used when the seed sealed the packages, so seed with the same value), `NEXT_PUBLIC_SITE_URL` (the deployment URL), `PAYMENTS_PROVIDER=mock` until Stripe keys exist. Leave `GEO_DEV_STATE` unset: Vercel supplies the visitor's region header, so eligibility uses real location.
+4. **Photography.** Add a Vercel Blob store to the project; its `BLOB_READ_WRITE_TOKEN` switches uploads to object storage (the serverless filesystem is read-only).
+5. **Redeploy.** Every push to `main` deploys.
+
 ## Production notes
 
-- Switch `apps/web/prisma/schema.prisma` to `postgresql`; status fields are strings and JSON columns are text, so nothing else changes.
+- The Prisma schema has two variants under `apps/web/prisma/variants/`; `prisma/select.mjs` copies the right one to `prisma/schema.prisma` from `DATABASE_URL` before every generate, push, or seed. Status fields are strings and JSON columns are text, so both providers share one data model.
 - Put `ADMINISTRATOR_SEAL_KEY` in a KMS principal the platform cannot read; the platform only receives unsealed material per round.
 - `SESSION_SECRET`, Stripe keys, and vendor keys go in the environment, never in the vendor table.
 - Round windows must handle tens of thousands of concurrent starts: scoring already runs after the window in a batch; add a queue and CDN before Phase 1 launch per spec §7.
