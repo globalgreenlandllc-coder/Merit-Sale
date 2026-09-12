@@ -32,7 +32,7 @@ export default async function RulesPage({ params, searchParams }: { params: Prom
         <Container className="grid gap-12 py-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,2.2fr)]">
           <aside className="lg:sticky lg:top-24 lg:max-h-[calc(100dvh-7rem)] lg:overflow-y-auto lg:self-start">
             <Plate>Official Rules · full text</Plate>
-            <Ledger className="mt-6 [&>*]:py-2.5 [&_dd]:text-[13.5px]" rows={[
+            <Ledger className="mt-6 [&>*]:!grid-cols-1 [&>*]:gap-y-1 [&>*]:py-2.5 [&_dd]:min-w-0 [&_dd]:break-words [&_dd]:text-[13.5px]" rows={[
               { term: 'Sponsor', detail: cfg?.parties.sponsor ?? '[SPONSOR LEGAL NAME]' },
               { term: 'Property owner', detail: open.isPractice ? 'n/a' : (p.speEntityName ?? cfg?.parties.propertyOwner ?? '[PROPERTY SPE LEGAL NAME]') },
               { term: 'Administrator', detail: cfg?.parties.administrator ?? '[ADMINISTRATOR COMPANY NAME]' },

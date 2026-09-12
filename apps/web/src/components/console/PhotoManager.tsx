@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
+import type { PropertyPhoto } from '@/lib/photos';
 import { Button } from '@/components/ui/Button';
 
 export function PhotoManager({ propertyId, photos: initial }: { propertyId: string; photos: PropertyPhoto[] }) {

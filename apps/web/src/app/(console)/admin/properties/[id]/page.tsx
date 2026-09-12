@@ -5,7 +5,7 @@ import { db } from '@/lib/db';
 import { PhotoManager } from '@/components/console/PhotoManager';
 import { Card } from '@/components/console/ConsoleShell';
 import { safeJson } from '@/lib/format';
-import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
+import type { PropertyPhoto } from '@/lib/photos';
 export const dynamic = 'force-dynamic';
 export default async function Page({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<Record<string, string | undefined>> }) {
   const { id } = await params; const sp = await searchParams;

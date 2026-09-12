@@ -24,7 +24,7 @@ import { DistancesLedger, FactSheet, FactsStrip, NearbyList, OwnershipCosts, Pro
 import { StageTracker } from '@/components/site/StageTracker';
 import { ParticipationMeter, participation } from '@/components/site/Participation';
 import { myStage, stageCounts } from '@/modules/meritopens/status';
-import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
+import type { PropertyPhoto } from '@/lib/photos';
 import { db } from '@/lib/db';
 import { getSession } from '@/lib/auth/session';
 import { listingNumber } from '@/lib/listing';

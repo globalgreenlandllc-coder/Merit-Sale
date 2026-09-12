@@ -6,7 +6,8 @@ import { assertRole, Forbidden } from '@/lib/auth/guards';
 import { safeJson } from '@/lib/format';
 import { removePhoto, storePhoto } from '@/lib/uploads';
 
-export interface PropertyPhoto { url: string; caption: string; credit: string; addedAt: string; published: boolean; sha256?: string }
+import { allPhotos, type PropertyPhoto } from '@/lib/photos';
+export type { PropertyPhoto } from '@/lib/photos';
 
 const ALLOWED = new Map([['image/jpeg', 'jpg'], ['image/png', 'png'], ['image/webp', 'webp'], ['image/avif', 'avif']]);
 const MAX_BYTES = 12 * 1024 * 1024;
@@ -19,7 +20,7 @@ function guarded<T extends unknown[]>(fn: (...args: T) => Promise<Response>) {
 async function photosOf(id: string) {
   const p = await db.property.findUnique({ where: { id }, select: { photosJson: true } });
   if (!p) return null;
-  return safeJson<PropertyPhoto[]>(p.photosJson, []).map((ph) => ({ ...ph, published: ph.published ?? false }));
+  return allPhotos(p);
 }
 
 /** Admin uploads property photography (multipart). Stored in Vercel Blob or under UPLOADS_DIR; never in `public`. */

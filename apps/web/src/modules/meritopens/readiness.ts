@@ -2,7 +2,7 @@ import 'server-only';
 import { db } from '@/lib/db';
 import { safeJson } from '@/lib/format';
 import { latestRuleset, parseConfig, eligibleStates, type OpenFull } from './queries';
-import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
+import type { PropertyPhoto } from '@/lib/photos';
 
 export interface ReadinessItem { key: string; label: string; ok: boolean; detail: string; href: string; owner: 'admin' | 'author' | 'administrator' | 'counsel' }
 export interface Readiness { items: ReadinessItem[]; ok: number; total: number; locked: boolean }
