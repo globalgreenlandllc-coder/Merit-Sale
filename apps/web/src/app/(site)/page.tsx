@@ -11,7 +11,7 @@ import { FactsStrip } from '@/components/site/ListingSections';
 import { ParticipationMeter } from '@/components/site/Participation';
 import { Placeholder } from '@/components/ui/Placeholder';
 import { site } from '@/lib/site';
-import { featuredOpen, listOpens, openCounts } from '@/modules/meritopens/queries';
+import { featuredOpen, listOpens, openCounts, sampleFilter } from '@/modules/meritopens/queries';
 import { db } from '@/lib/db';
 import { fmtDate, money, sqft } from '@/lib/format';
 import { photoSrc, publishedPhotos, toRoman } from '@/lib/photos';
@@ -35,7 +35,7 @@ const faqs = [
 
 export default async function HomePage() {
   const [featured, opens, hashes, certs, released, complete] = await Promise.all([
-    featuredOpen(), listOpens(), db.form.count({ where: { hashPublishedAt: { not: null } } }), db.certification.count(), db.form.count({ where: { packageReleasedAt: { not: null } } }), db.meritOpen.count({ where: { status: 'complete' } }),
+    featuredOpen(), listOpens(), db.form.count({ where: { hashPublishedAt: { not: null }, meritOpen: await sampleFilter() } }), db.certification.count({ where: { meritOpen: await sampleFilter() } }), db.form.count({ where: { packageReleasedAt: { not: null }, meritOpen: await sampleFilter() } }), db.meritOpen.count({ where: { status: 'complete', ...(await sampleFilter()) } }),
   ]);
   const counts = Object.fromEntries(await Promise.all(opens.map(async (o) => [o.id, await openCounts(o.id)] as const)));
   const p = featured?.property; const geo = !!p && typeof p.latitude === 'number' && typeof p.longitude === 'number'; const owned = p?.titleStatus === 'owned';
@@ -84,6 +84,15 @@ export default async function HomePage() {
               )}
             </Link>
           )}
+          {!featured && (
+            <div className="plate-frame-dark hidden lg:block" aria-hidden>
+              <div className="grain grain-dark relative flex aspect-[3/2] flex-col justify-end bg-ink-2 p-8">
+                <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(210,180,122,0.12),transparent_60%)]" />
+                <div className="plate-dark relative z-[2]">Next Merit Open</div>
+                <p className="font-display relative z-[2] mt-3 text-[26px] leading-tight text-parchment/90">The next listing is announced here first, with its rules, schedule, and hash published before anyone registers.</p>
+              </div>
+            </div>
+          )}
         </Container>
       </section>
 
@@ -120,7 +129,7 @@ export default async function HomePage() {
           <SectionHeading index="§ 05" label="Verify everything" title="Scams are vague. We are not." lede="Every factual claim on this site is either linked to its source or visibly marked pending: a county record, a custody agreement, a third-party administrator, a cryptographic hash." />
           <Ledger rows={[
             { term: 'The home is real and owned by us', detail: 'Title is held by the property SPE before paid registration opens. Each listing links the county recorder entry.' },
-            { term: 'Your money is not in our bank account', detail: 'Registration fees settle from the payment processor directly to a third-party custodian under a written custody agreement. The platform holds no balance.' },
+            { term: 'Your money is not in our bank account', detail: <>Registration fees settle from the payment processor directly to a third-party custodian under a written custody agreement. The platform holds no balance. <Link href="/custody" className="link-rule">Custody ledger →</Link></> },
             { term: 'Nobody can pick a favorite', detail: 'Scoring and advancement are certified by an independent administrator who cannot change a score or a rule. Advancement is a pure function of the score table and is replayable.' },
             { term: 'The answer key can’t be changed after you take the test', detail: <>Before each round we publish a SHA-256 fingerprint of the sealed answer key and release the key afterward. <Link href="/registry" className="link-rule">Hash registry →</Link></> },
             { term: 'The dates are fixed', detail: 'Round dates are in the Official Rules and don’t move. The registration close date cannot be edited once the rules are locked.' },

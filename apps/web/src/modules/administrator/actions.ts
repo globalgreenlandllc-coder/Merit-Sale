@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { buildPackage, sealPackage, unsealPackage, validateForm, verifyPackage, type AuthoredItemInput } from '@etk/items';
 import { hashRuleset, hashObject, CANCELLATION_REASONS, type MeritOpenStatus } from '@etk/rules-config';
 import { db } from '@/lib/db';
+import { recordReleaseInstruction } from '@/lib/custody';
 import { audit } from '@/lib/audit';
 import { env } from '@/lib/env';
 import { assertRole } from '@/lib/auth/guards';
@@ -168,7 +169,7 @@ export async function cancelMeritOpenAction(formData: FormData) {
   const t = await transitionOpen(openId, 'cancelled', s, { justification: `${code}: ${note}` });
   if (!t.ok) fail(path, t.error);
   const now = new Date();
-  await db.meritOpen.update({ where: { id: openId }, data: { cancellationReasonCode: code, cancellationNote: note, cancelledAt: now } });
+  const open = await db.meritOpen.update({ where: { id: openId }, data: { cancellationReasonCode: code, cancellationNote: note, cancelledAt: now } });
   const payments = await db.payment.findMany({ where: { status: 'settled', registration: { meritOpenId: openId } } });
   const provider = getPaymentProvider();
   let completed = 0, manual = 0;
@@ -180,6 +181,7 @@ export async function cancelMeritOpenAction(formData: FormData) {
     else manual++;
   }
   const doc = { meritOpen: openId, code, note, cancelledAt: now.toISOString(), refunds: { completed, manual } };
+  await recordReleaseInstruction({ event: 'cancellation_refunds', meritOpen: open.slug, meritOpenId: openId, amountCents: payments.reduce((sum, p) => sum + p.amountCents + p.feeCents, 0), payee: 'Registrants (original payment method)', reference: `cancellation ${code}`, note: `Refund every settled registration fee in full including processing fees (Rules 12.4). ${completed} completed at the processor, ${manual} queued for manual release.`, issuedByRole: s.role, actorId: s.userId });
   await db.certification.create({ data: { meritOpenId: openId, type: 'cancellation', documentJson: JSON.stringify(doc), hash: hashObject(doc), signedById: s.userId, signedAt: now } });
   await audit({ actorId: s.userId, actorRole: s.role, action: 'meritopen.cancel', objectType: 'MeritOpen', objectId: openId, after: doc });
   await broadcastNotice({ meritOpenId: openId, subject: 'Merit Open cancelled — full refund', body: `The Merit Open has been cancelled under Official Rules ${code}. ${note}\n\nYour registration fee, including processing fees, is being refunded in full to the original payment method (Rules 12.4).` });
@@ -232,6 +234,8 @@ export async function certifyWinnerAction(formData: FormData) {
   await audit({ actorId: s.userId, actorRole: s.role, action: 'winner.certify', objectType: 'MeritOpen', objectId: openId, after: doc });
   const t = await transitionOpen(openId, 'closing', s);
   if (!t.ok) fail(path, t.error);
+  const title = await db.vendor.findFirst({ where: { kind: 'title', active: true } });
+  await recordReleaseInstruction({ event: 'closing_instruction', meritOpen: open.slug, meritOpenId: openId, amountCents: open.cashComponentCents, payee: title?.name ?? '[Title company]', reference: `winner certification ${hashObject(doc).slice(0, 12)}`, note: 'Release the Cash Component to the title company at closing for the certified winner (Rules 6.2); release the registration fee balance to the Sponsor on deed recording (Exhibit G).', issuedByRole: s.role, actorId: s.userId });
   redirect(`/administrator/opens/${openId}?winner=1`);
 }
 
@@ -248,6 +252,7 @@ export async function completeClosingAction(formData: FormData) {
   await db.meritOpen.update({ where: { id: openId }, data: { closedAt: now } });
   const t = await transitionOpen(openId, 'complete', s, { justification: `deed ${deedRef}` });
   if (!t.ok) fail(path, t.error);
+  await recordReleaseInstruction({ event: 'closing_recorded', meritOpen: open.slug, meritOpenId: openId, amountCents: null, payee: 'Sponsor', reference: deedRef, note: 'Deed recorded; the closing release condition in the custody agreement is met.', issuedByRole: s.role, actorId: s.userId });
   redirect(path);
 }
 

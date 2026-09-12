@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { validateItem, type AuthoredItemInput } from '@etk/items';
 import { RulesetConfigSchema } from '@etk/rules-config';
 import { db } from '@/lib/db';
+import { CustodyConfigSchema } from '@/lib/custody';
 import { audit } from '@/lib/audit';
 import { assertRole } from '@/lib/auth/guards';
 import { getPaymentProvider } from '@/lib/providers/payments';
@@ -187,7 +188,14 @@ export async function addExclusionAction(formData: FormData) {
 export async function saveVendorAction(formData: FormData) {
   const s = await assertRole(['admin']);
   const id = str(formData, 'id');
-  const data = { kind: str(formData, 'kind'), name: str(formData, 'name'), publicSummaryUrl: str(formData, 'publicSummaryUrl') || null, active: formData.get('active') === 'on', configJson: str(formData, 'configJson') || '{}' };
+  const kind = str(formData, 'kind');
+  let configJson = str(formData, 'configJson') || '{}';
+  if (kind === 'custodian' && formData.has('institution')) {
+    const parsed = CustodyConfigSchema.safeParse({ institution: str(formData, 'institution'), accountType: str(formData, 'accountType') || undefined, agreementDate: str(formData, 'agreementDate'), agreementHash: str(formData, 'agreementHash').toLowerCase(), settlement: str(formData, 'settlement') || 'destination', reconciliationEmail: str(formData, 'reconciliationEmail'), releaseEvents: str(formData, 'releaseEvents').split('\n').map((l) => l.trim()).filter(Boolean) });
+    if (!parsed.success) redirect(`/admin/vendors?${id ? `edit=${id}&` : ''}error=${encodeURIComponent(parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; '))}`);
+    configJson = JSON.stringify(parsed.data);
+  }
+  const data = { kind, name: str(formData, 'name'), publicSummaryUrl: str(formData, 'publicSummaryUrl') || null, active: formData.get('active') === 'on', configJson };
   const row = id ? await db.vendor.update({ where: { id }, data }) : await db.vendor.create({ data });
   await audit({ actorId: s.userId, actorRole: s.role, action: 'vendor.save', objectType: 'Vendor', objectId: row.id, after: { kind: data.kind, name: data.name } });
   redirect('/admin/vendors');

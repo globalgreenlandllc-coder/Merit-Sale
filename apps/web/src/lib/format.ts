@@ -11,6 +11,13 @@ export function fmtDate(d: Date | string | null | undefined): string {
   if (!d) return '—';
   return new Date(d).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: TZ });
 }
+/** A calendar date with no time (YYYY-MM-DD), formatted without any timezone shift. */
+export function fmtDay(d: string | null | undefined): string {
+  if (!d) return '—';
+  const m = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return d;
+  return new Date(Date.UTC(+m[1]!, +m[2]! - 1, +m[3]!)).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+}
 export function fmtDateTime(d: Date | string | null | undefined): string {
   if (!d) return '—';
   return new Date(d).toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: TZ, timeZoneName: 'short' });

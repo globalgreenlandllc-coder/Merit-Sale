@@ -26,7 +26,7 @@ export function Docket({ open, myReg, custodian, listingNo, states, counts, inli
     ...(fin ? [['Final', dated(fin.scheduledAt)] as [string, React.ReactNode]] : []),
     ['Rules', locked ? <span key="r">v{open.rulesVersion} · <Hash value={open.rulesHash} short /></span> : <span key="r" className="text-graphite">Draft · hashed at lock</span>],
     ['States', states.join(', ') || '[state list]'],
-    ['Custodian', <>{custodian?.name ?? '[Custodian name]'} {custodian?.publicSummaryUrl ? <a className="link-rule" href={custodian.publicSummaryUrl}>↗</a> : <span className="text-graphite">· summary pending</span>}</>],
+    ['Custodian', <><Link href="/custody" className="link-rule">{custodian?.name ?? '[Custodian name]'}</Link> {custodian?.publicSummaryUrl ? <a className="link-rule" href={custodian.publicSummaryUrl}>↗</a> : <span className="text-graphite">· summary pending</span>}</>],
   ];
   return (
     <div id={inline ? 'docket-inline' : undefined} className="border-y hair bg-paper py-5 lg:border lg:px-6">

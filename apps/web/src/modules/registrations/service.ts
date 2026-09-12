@@ -86,6 +86,21 @@ export async function settleRegistration(registrationId: string, args: { process
   return updated;
 }
 
+/** A refund executed at the processor is mirrored here so the custody ledger matches the statement. Idempotent. */
+export async function markProcessorRefund(processorRef: string, amountRefundedCents: number, refundRef: string | null) {
+  const payment = await db.payment.findFirst({ where: { processorRef }, include: { refunds: true } });
+  if (!payment || payment.status === 'refunded') return null;
+  const now = new Date();
+  const already = payment.refunds.reduce((a, r) => a + (r.status === 'completed' ? r.amountCents : 0), 0);
+  if (amountRefundedCents > already) await db.refund.create({ data: { paymentId: payment.id, amountCents: amountRefundedCents - already, status: 'completed', reason: 'Refund executed at the processor', processorRef: refundRef, attemptedAt: now } });
+  if (amountRefundedCents >= payment.amountCents) {
+    await db.payment.update({ where: { id: payment.id }, data: { status: 'refunded', refundedAt: now } });
+    await db.registration.update({ where: { id: payment.registrationId }, data: { status: 'refunded' } });
+  }
+  await audit({ actorRole: 'system', action: 'payment.refund.mirrored', objectType: 'Payment', objectId: payment.id, detail: { processorRef, refundRef, amountRefundedCents } });
+  return payment;
+}
+
 /** Chargebacks disqualify (Rules 12.5) unless an admin later records the unauthorised-use exception. */
 export async function markChargeback(processorRef: string) {
   const payment = await db.payment.findFirst({ where: { processorRef } });

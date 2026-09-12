@@ -5,7 +5,7 @@ import { Placeholder } from '@/components/ui/Placeholder';
 import { site } from '@/lib/site';
 
 const cols = [
-  { title: 'The record', links: [['/registry', 'Hash registry'], ['/audit', 'Public audit summaries'], ['/opens', 'Merit Opens'], ['/practice', 'Practice problems']] },
+  { title: 'The record', links: [['/registry', 'Hash registry'], ['/audit', 'Public audit summaries'], ['/custody', 'Custody of fees'], ['/opens', 'Merit Opens'], ['/practice', 'Practice problems']] },
   { title: 'The rules', links: [['/rules', 'Official Rules'], ['/terms', 'Terms of Service'], ['/privacy', 'Privacy Policy'], ['/accessibility', 'Accessibility'], ['/disputes', 'Dispute procedure']] },
   { title: 'People', links: [['/account', 'Your account'], ['/report', 'Report a concern'], ['/sign-in', 'Sign in']] },
 ];
