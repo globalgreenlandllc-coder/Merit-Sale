@@ -2,7 +2,7 @@ import 'server-only';
 import { db } from '@/lib/db';
 import { safeJson } from '@/lib/format';
 import { latestRuleset, parseConfig, eligibleStates, type OpenFull } from './queries';
-import type { PropertyPhoto } from '@/lib/photos';
+import { isDemoPhoto, type PropertyPhoto } from '@/lib/photos';
 
 export interface ReadinessItem { key: string; label: string; ok: boolean; detail: string; href: string; owner: 'admin' | 'author' | 'administrator' | 'counsel' }
 export interface Readiness { items: ReadinessItem[]; ok: number; total: number; locked: boolean }
@@ -13,7 +13,7 @@ const EXPECTED_ITEMS: Record<string, number> = { r1: 1, r2: 10, r3: 12, final: 1
 /** Everything still needed before the Administrator can lock and registration can open. */
 export async function readiness(open: OpenFull): Promise<Readiness> {
   const p = open.property; const cfg = parseConfig(latestRuleset(open)); const states = eligibleStates(open);
-  const photos = safeJson<PropertyPhoto[]>(p.photosJson, []).filter((x) => x.published);
+  const published = safeJson<PropertyPhoto[]>(p.photosJson, []).filter((x) => x.published); const photos = published.filter((x) => !isDemoPhoto(x)); const samples = published.length - photos.length;
   const stateRules = await db.stateRule.findMany({ where: { code: { in: states } } });
   const forms = await db.form.findMany({ where: { meritOpenId: open.id }, include: { items: { select: { id: true, scoringSpecJson: true } } } });
   const items: ReadinessItem[] = [];
@@ -25,7 +25,7 @@ export async function readiness(open: OpenFull): Promise<Readiness> {
     add('facts', 'Core facts entered', !!(p.beds && p.baths && p.sqft && p.yearBuilt), 'Beds, baths, interior area, and year built.', prop, 'admin');
     add('title', 'Title recorded and linked', p.titleStatus === 'owned' && !!p.countyRecorderUrl && !isPlaceholder(p.speEntityName), p.titleStatus === 'owned' ? 'Add the county recorder link and the SPE name.' : `Title is ${p.titleStatus.replace(/_/g, ' ')}; registration needs owned title or an Administrator override.`, prop, 'admin');
     add('appraisal', 'Appraisal on file', !!p.appraisedValueCents && !!p.appraisalDate && !isPlaceholder(p.appraiserName) && !!p.appraisalReportUrl, 'Value, date, appraiser, and a report link.', prop, 'admin');
-    add('photos', 'Photography published', photos.length > 0, photos.length ? `${photos.length} published.` : 'Upload and mark photos published after counsel approval; the vicinity map stands in on cards and the cover until then.', prop, 'counsel');
+    add('photos', 'Photography published', photos.length > 0, photos.length ? `${photos.length} published.` : samples ? `${samples} sample photograph${samples === 1 ? '' : 's'} stand in while the site is in demo mode; live mode removes them. Upload the listing’s own photography.` : 'Upload and mark photos published after counsel approval; the vicinity map stands in on cards and the cover until then.', prop, 'counsel');
     add('plans', 'Plate set assigned', !!p.planSetKey, 'Floor plan, site plan, and elevation, or leave pending.', prop, 'admin');
     add('approved', 'Neighborhood and nearby claims approved', !!p.factsApprovedAt && !!p.description, 'Counsel approves the factual claims; until then they render as pending.', prop, 'counsel');
     add('costs', 'Cost to hold entered', p.taxAnnualCents !== null && p.insuranceAnnualCents !== null, 'Property tax and insurance estimates with sources.', prop, 'admin');

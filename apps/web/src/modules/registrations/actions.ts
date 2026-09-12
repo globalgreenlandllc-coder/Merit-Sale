@@ -6,6 +6,7 @@ import { env } from '@/lib/env';
 import { getSession } from '@/lib/auth/session';
 import { getIdentityProvider } from '@/lib/providers/identity';
 import { getPaymentProvider } from '@/lib/providers/payments';
+import { siteMode } from '@/lib/site-mode';
 import { getOpenBySlug, latestRuleset } from '@/modules/meritopens/queries';
 import { checkEligibility, registrationWindow, settleRegistration } from './service';
 
@@ -76,6 +77,8 @@ export async function startPayment(formData: FormData) {
   if (user.idvStatus !== 'verified' || user.idvLevel !== 'full') redirect(`/opens/${slug}/register?step=identity`);
   if (reg.status === 'confirmed') redirect(`/opens/${slug}/register?step=confirmed`);
   const provider = getPaymentProvider();
+  // Live mode never records a fee that no processor took: the mock provider is for demonstration only.
+  if (provider.name === 'mock' && (await siteMode()) === 'live') redirect(`/opens/${slug}/register?step=accept&blocked=${encodeURIComponent('Payment processing is not yet configured on this site, so registration fees cannot be taken. Your acceptance is recorded; come back once payments open.')}`);
   const result = await provider.createCheckout({
     registrationId: reg.id, amountCents: open.registrationFeeCents, currency: 'usd', email: user.email,
     description: `Registration — ${open.name}`,

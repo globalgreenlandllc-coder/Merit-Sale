@@ -5,6 +5,7 @@ import { Hash } from '@/components/ui/Hash';
 import { Badge } from '@/components/ui/Badge';
 import { Table, Td, Tr } from '@/components/ui/Table';
 import { db } from '@/lib/db';
+import { sampleFilter } from '@/modules/meritopens/queries';
 import { certLabel, fmtDateTime } from '@/lib/format';
 import { HashVerifier } from '@/components/site/HashVerifier';
 
@@ -12,10 +13,11 @@ export const dynamic = 'force-dynamic';
 export const metadata = { title: 'Hash registry' };
 
 export default async function RegistryPage() {
+  const sample = await sampleFilter();
   const [forms, opens, certs] = await Promise.all([
-    db.form.findMany({ where: { hashPublishedAt: { not: null } }, include: { meritOpen: { select: { name: true, slug: true } } }, orderBy: [{ hashPublishedAt: 'desc' }] }),
-    db.meritOpen.findMany({ where: { rulesHash: { not: null } }, select: { name: true, slug: true, rulesVersion: true, rulesHash: true, lockedAt: true } }),
-    db.certification.findMany({ include: { meritOpen: { select: { name: true, slug: true } } }, orderBy: { signedAt: 'desc' } }),
+    db.form.findMany({ where: { hashPublishedAt: { not: null }, meritOpen: sample }, include: { meritOpen: { select: { name: true, slug: true } } }, orderBy: [{ hashPublishedAt: 'desc' }] }),
+    db.meritOpen.findMany({ where: { rulesHash: { not: null }, ...sample }, select: { name: true, slug: true, rulesVersion: true, rulesHash: true, lockedAt: true } }),
+    db.certification.findMany({ where: { meritOpen: sample }, include: { meritOpen: { select: { name: true, slug: true } } }, orderBy: { signedAt: 'desc' } }),
   ]);
   return (
     <Container className="py-16">

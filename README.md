@@ -14,11 +14,24 @@ npm test             # golden tests for scoring, rules-config, items
 
 Requires Node 20+. No external keys are needed: payments, identity verification, sanctions, and proctoring run through mock adapters until vendor keys are set in `apps/web/.env` (see `.env.example`).
 
+### Demo mode and live mode
+
+The site runs in one of two modes, switched with a button in the admin console (**Site mode**) and shown as a chip in every console and, in demo mode, as a ribbon above the public header.
+
+| | Demonstration | Live |
+|---|---|---|
+| Sample listings (seeded, marked *Sample*) | Public | Hidden from every public page; still in the console |
+| Photography | Credited sample photographs are loaded onto sample properties that have none | Every sample photograph is removed; only a listing’s own published photography shows |
+| Sign-in | Any address signs in directly; one-click personas for every realm | One-time email codes only; staff roles from the environment lists; persona sessions end |
+| Payments | Mock processor settles instantly | Registration payments are refused until a real processor is configured |
+
+Resolution order: `SITE_MODE` in the environment (pins the mode and disables the switch) → the stored setting → a default (`demo` in development; in production `demo` while the database holds only sample listings, `live` once a real listing exists). Initialising a database through `/api/setup` stores `demo`. Going live from the console requires `PLATFORM_ADMIN_EMAILS` to be set, otherwise nobody could reach the console afterwards; until a staff address is listed, `/api/setup` offers the same switch so a fresh deployment can be put into either mode. The console page also lists what live mode still needs from the deployment (session secret, seal key, email delivery, payment processor, identity vendor, photograph storage), and `/api/health` reports the mode and its source. Every switch is an audit event.
+
 ### Signing in
 
-Production uses passwordless one-time codes: a person enters their email, receives a six-digit code (Resend delivers it when `RESEND_API_KEY` is set; otherwise the code is written to the server log and the page says so), and signs in. Staff roles are never self-assigned: the comma-separated lists `PLATFORM_ADMIN_EMAILS`, `ADMINISTRATOR_EMAILS`, `AUDITOR_EMAILS`, and `ITEM_AUTHOR_EMAILS` grant roles at sign-in. Codes expire in ten minutes, allow five attempts, and are limited to five per address per hour.
+Live mode uses passwordless one-time codes: a person enters their email, receives a six-digit code (Resend delivers it when `RESEND_API_KEY` is set; otherwise the code is written to the server log and the page says so), and signs in. Staff roles are never self-assigned: the comma-separated lists `PLATFORM_ADMIN_EMAILS`, `ADMINISTRATOR_EMAILS`, `AUDITOR_EMAILS`, and `ITEM_AUTHOR_EMAILS` grant roles at sign-in. Codes expire in ten minutes, allow five attempts, and are limited to five per address per hour.
 
-Local development defaults to demo mode (`AUTH_MODE=demo`): the code is shown on the page, and the seeded personas below appear as one-click buttons. Personas can be enabled on a deployment with `AUTH_DEMO_PERSONAS=true`, which is insecure and only for a demo.
+Demo mode (the development default) signs any address in directly, no code, and shows the seeded personas below as one-click buttons. `AUTH_MODE` and `AUTH_DEMO_PERSONAS` pin either behaviour independently of the site mode; personas let anyone act as staff, so pin them on only for a deployment that is meant to be a demonstration.
 
 ### Development personas
 

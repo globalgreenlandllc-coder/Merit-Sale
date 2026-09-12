@@ -1,5 +1,5 @@
 import type { PrismaClient } from '@prisma/client';
-import { allPhotos, type PropertyPhoto } from '@/lib/photos';
+import { allPhotos, isDemoPhoto, type PropertyPhoto } from '@/lib/photos';
 
 /**
  * Demo photography for the seeded properties. Licensed stock photographs (Unsplash licence)
@@ -7,7 +7,7 @@ import { allPhotos, type PropertyPhoto } from '@/lib/photos';
  * replaced through the console once real photography is approved.
  */
 const U = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1600&q=80`;
-const ph = (id: string, caption: string, addedAt: string): PropertyPhoto => ({ url: U(id), caption, credit: 'Unsplash · demo photograph', addedAt, published: true });
+const ph = (id: string, caption: string, addedAt: string): PropertyPhoto => ({ url: U(id), caption, credit: 'Unsplash · demo photograph', addedAt, published: true, demo: true });
 
 export const DEMO_PHOTOS: Record<string, PropertyPhoto[]> = {
   'larkspur-residence': [
@@ -23,13 +23,26 @@ export const DEMO_PHOTOS: Record<string, PropertyPhoto[]> = {
   ],
 };
 
-/** Loads demo photography onto seeded properties that have none yet. Idempotent; never touches a property that already has photographs. */
+/** Loads sample photography onto seeded properties that have none yet (demo mode). Idempotent; never touches a property that already has photographs. */
 export async function backfillDemoPhotos(db: PrismaClient): Promise<number> {
   let n = 0;
   for (const [slug, photos] of Object.entries(DEMO_PHOTOS)) {
     const p = await db.property.findUnique({ where: { slug }, select: { id: true, photosJson: true } });
     if (!p || allPhotos(p).length > 0) continue;
     await db.property.update({ where: { id: p.id }, data: { photosJson: JSON.stringify(photos) } });
+    n++;
+  }
+  return n;
+}
+
+/** Removes every sample photograph (live mode). Real photography, published or not, is untouched. Returns the number of properties changed. */
+export async function stripDemoPhotos(db: PrismaClient): Promise<number> {
+  let n = 0;
+  const props = await db.property.findMany({ select: { id: true, photosJson: true } });
+  for (const p of props) {
+    const photos = allPhotos(p); const kept = photos.filter((ph) => !isDemoPhoto(ph));
+    if (kept.length === photos.length) continue;
+    await db.property.update({ where: { id: p.id }, data: { photosJson: JSON.stringify(kept) } });
     n++;
   }
   return n;

@@ -4,7 +4,7 @@ import { requireRole } from '@/lib/auth/guards';
 const nav = [
   { href: '/admin', label: 'Dashboard' }, { href: '/admin/listings/new', label: 'New listing' }, { href: '/admin/properties', label: 'Properties' }, { href: '/admin/opens', label: 'Merit Opens' },
   { href: '/admin/registrations', label: 'Registrations (support)' }, { href: '/admin/refunds', label: 'Refund queue' }, { href: '/admin/states', label: 'States matrix' },
-  { href: '/admin/exclusions', label: 'Exclusion lists' }, { href: '/admin/vendors', label: 'Vendors' },
+  { href: '/admin/exclusions', label: 'Exclusion lists' }, { href: '/admin/vendors', label: 'Vendors' }, { href: '/admin/site', label: 'Site mode' },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

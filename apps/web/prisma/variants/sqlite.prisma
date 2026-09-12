@@ -45,6 +45,8 @@ model User {
 model Property {
   id                  String   @id @default(cuid())
   slug                String   @unique
+  /// sample record loaded by the seed; hidden from the public in live mode
+  demo                Boolean  @default(false)
   name                String
   speEntityId         String?
   speEntityName       String?
@@ -124,6 +126,8 @@ model MeritOpen {
   city                      String
   /// practice opens carry a small cash prize and no property transfer (Phase 0)
   isPractice                Boolean  @default(false)
+  /// sample record loaded by the seed; hidden from the public in live mode
+  demo                      Boolean  @default(false)
   stateEligibilityJson      String   @default("[]")
   registrationFeeCents      Int
   cashComponentCents        Int

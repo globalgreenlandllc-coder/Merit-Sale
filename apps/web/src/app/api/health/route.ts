@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { usingBlob } from '@/lib/uploads';
 import { authMode, demoPersonasEnabled, staffListsConfigured } from '@/lib/auth/mode';
 import { emailProviderName } from '@/lib/providers/email';
+import { bootstrapSwitchOpen, siteModeState } from '@/lib/site-mode';
 
 export const dynamic = 'force-dynamic';
 
@@ -10,7 +11,9 @@ const redact = (s: string) => s.replace(/:\/\/([^:@/]+):([^@]+)@/g, '://$1:â€¢â€
 /** Operational health: configuration presence (never values) and a live database round-trip. */
 export async function GET() {
   const url = process.env.DATABASE_URL ?? '';
+  const [mode, auth, personas] = await Promise.all([siteModeState(), authMode(), demoPersonasEnabled()]);
   const config = {
+    site: { mode: mode.mode, source: mode.source, locked: mode.locked, bootstrapSwitch: bootstrapSwitchOpen() },
     databaseUrl: url ? (url.startsWith('file:') ? 'sqlite' : 'postgresql') : 'missing',
     databaseUrlUnpooled: !!process.env.DATABASE_URL_UNPOOLED,
     sessionSecret: !!process.env.SESSION_SECRET && process.env.SESSION_SECRET !== 'dev-only-change-me-before-any-deploy',
@@ -19,7 +22,7 @@ export async function GET() {
     payments: process.env.PAYMENTS_PROVIDER ?? 'mock',
     commit: (process.env.VERCEL_GIT_COMMIT_SHA ?? '').slice(0, 7) || null,
     node: process.version,
-    auth: { mode: authMode(), emailDelivery: emailProviderName(), staffListed: staffListsConfigured(), demoPersonas: demoPersonasEnabled() },
+    auth: { mode: auth, emailDelivery: emailProviderName(), staffListed: staffListsConfigured(), demoPersonas: personas },
   };
   try {
     const [opens, users] = await Promise.all([db.meritOpen.count(), db.user.count()]);

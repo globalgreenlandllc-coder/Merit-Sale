@@ -12,14 +12,15 @@ function safeNext(v: FormDataEntryValue | null, fallback = '/account') {
   return s.startsWith('/') && !s.startsWith('//') ? s : fallback;
 }
 
-/** Demo sign-in (development only): an existing user by email, or a new registrant. Staff personas require AUTH_DEMO_PERSONAS. */
+/** Demo sign-in: an existing user by email, or a new registrant. Only in demo mode; staff personas only while personas are enabled. */
 export async function signInLocal(formData: FormData) {
   const email = String(formData.get('email') ?? '').trim().toLowerCase();
   const next = safeNext(formData.get('next'));
-  if (authMode() !== 'demo' && !demoPersonasEnabled()) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
+  const [mode, personas] = await Promise.all([authMode(), demoPersonasEnabled()]);
+  if (mode !== 'demo' && !personas) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) redirect(`/sign-in?error=email&next=${encodeURIComponent(next)}`);
   let user = await db.user.findUnique({ where: { email } });
-  if (user && user.role !== 'registrant' && !demoPersonasEnabled()) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
+  if (user && user.role !== 'registrant' && !personas) redirect(`/sign-in?error=demo_disabled&next=${encodeURIComponent(next)}`);
   if (!user) {
     user = await db.user.create({ data: { email, role: 'registrant' } });
     await audit({ actorId: user.id, actorRole: 'registrant', action: 'account.create', objectType: 'User', objectId: user.id });

@@ -3,6 +3,7 @@ import type { Prisma } from '@prisma/client';
 import { RulesetConfigSchema, type RulesetConfig } from '@etk/rules-config';
 import { db } from '@/lib/db';
 import { safeJson } from '@/lib/format';
+import { siteMode } from '@/lib/site-mode';
 
 const formSelect = { id: true, label: true, roundNumber: true, packageHash: true, hashPublishedAt: true, packageReleasedAt: true, _count: { select: { items: true } } } as const;
 
@@ -17,22 +18,29 @@ export const openInclude = {
 export type OpenFull = Prisma.MeritOpenGetPayload<{ include: typeof openInclude }>;
 export type RoundFull = OpenFull['rounds'][number];
 
-export async function getOpenBySlug(slug: string): Promise<OpenFull | null> {
-  return db.meritOpen.findUnique({ where: { slug }, include: openInclude });
+/** Sample records (seeded, `demo: true`) are public only in demo mode; the console always sees them. */
+export async function sampleFilter(includeDemo?: boolean): Promise<Prisma.MeritOpenWhereInput> {
+  return includeDemo || (await siteMode()) === 'demo' ? {} : { demo: false };
+}
+
+export async function getOpenBySlug(slug: string, opts: { includeDemo?: boolean } = {}): Promise<OpenFull | null> {
+  return db.meritOpen.findFirst({ where: { slug, ...(await sampleFilter(opts.includeDemo)) }, include: openInclude });
 }
 export async function getOpenById(id: string): Promise<OpenFull | null> {
   return db.meritOpen.findUnique({ where: { id }, include: openInclude });
 }
-export async function listOpens(opts: { includeDraft?: boolean } = {}): Promise<OpenFull[]> {
-  return db.meritOpen.findMany({ where: opts.includeDraft ? {} : { status: { not: 'draft' } }, include: openInclude, orderBy: { createdAt: 'desc' } });
+export async function listOpens(opts: { includeDraft?: boolean; includeDemo?: boolean } = {}): Promise<OpenFull[]> {
+  const where: Prisma.MeritOpenWhereInput = { ...(opts.includeDraft ? {} : { status: { not: 'draft' } }), ...(await sampleFilter(opts.includeDemo ?? opts.includeDraft)) };
+  return db.meritOpen.findMany({ where, include: openInclude, orderBy: { createdAt: 'desc' } });
 }
 
 const LIVE = ['registration', 'r1', 'r2', 'r3', 'final', 'tiebreak', 'certification', 'closing'];
 
 export async function featuredOpen(): Promise<OpenFull | null> {
-  const live = await db.meritOpen.findFirst({ where: { status: { in: LIVE }, isPractice: false }, include: openInclude, orderBy: { createdAt: 'desc' } });
+  const sample = await sampleFilter();
+  const live = await db.meritOpen.findFirst({ where: { status: { in: LIVE }, isPractice: false, ...sample }, include: openInclude, orderBy: { createdAt: 'desc' } });
   if (live) return live;
-  return db.meritOpen.findFirst({ where: { status: 'reservation' }, include: openInclude, orderBy: { createdAt: 'desc' } });
+  return db.meritOpen.findFirst({ where: { status: 'reservation', ...sample }, include: openInclude, orderBy: { createdAt: 'desc' } });
 }
 
 export async function openCounts(openId: string) {

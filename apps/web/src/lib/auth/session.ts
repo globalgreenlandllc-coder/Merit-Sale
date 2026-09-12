@@ -1,5 +1,6 @@
 import 'server-only';
 import { cookies } from 'next/headers';
+import { demoPersonasEnabled } from './mode';
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { env } from '@/lib/env';
 
@@ -38,9 +39,14 @@ export function decodeSession(token: string | undefined | null): Session | null 
   } catch { return null; }
 }
 
+/** Persona accounts (seeded `.test` addresses) exist only in demo mode; their sessions end the moment personas are disabled. */
+export const isPersonaEmail = (email: string) => /\.test$/i.test(email);
+
 export async function getSession(): Promise<Session | null> {
-  const jar = await cookies();
-  return decodeSession(jar.get(SESSION_COOKIE)?.value);
+  const store = await cookies();
+  const s = decodeSession(store.get(SESSION_COOKIE)?.value);
+  if (s && isPersonaEmail(s.email) && !(await demoPersonasEnabled())) return null;
+  return s;
 }
 
 export async function createSession(user: { id: string; role: string; email: string; legalName: string | null }) {

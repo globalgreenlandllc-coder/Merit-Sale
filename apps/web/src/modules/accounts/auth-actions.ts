@@ -35,7 +35,7 @@ export async function requestCodeAction(formData: FormData) {
     html: `<p style="font:16px system-ui">Your sign-in code is</p><p style="font:32px/1 ui-monospace,monospace;letter-spacing:.2em">${code}</p><p style="font:14px system-ui;color:#555">It expires in 10 minutes. If you did not request it, ignore this message.</p>`,
   });
   await audit({ actorRole: 'visitor', action: 'auth.code.issue', objectType: 'LoginCode', objectId: email, detail: { delivered: result.delivered, via: result.via }, ip });
-  const showCode = authMode() === 'demo' && process.env.NODE_ENV !== 'production';
+  const showCode = (await authMode()) === 'demo' && process.env.NODE_ENV !== 'production';
   redirect(back(email, next, { step: 'code', ...(result.delivered ? { sent: '1' } : { notdelivered: '1' }), ...(showCode ? { demo_code: code } : {}) }));
 }
 

@@ -30,6 +30,7 @@ CREATE TABLE "User" (
 CREATE TABLE "Property" (
     "id" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
+    "demo" BOOLEAN NOT NULL DEFAULT false,
     "name" TEXT NOT NULL,
     "speEntityId" TEXT,
     "speEntityName" TEXT,
@@ -103,6 +104,7 @@ CREATE TABLE "MeritOpen" (
     "name" TEXT NOT NULL,
     "city" TEXT NOT NULL,
     "isPractice" BOOLEAN NOT NULL DEFAULT false,
+    "demo" BOOLEAN NOT NULL DEFAULT false,
     "stateEligibilityJson" TEXT NOT NULL DEFAULT '[]',
     "registrationFeeCents" INTEGER NOT NULL,
     "cashComponentCents" INTEGER NOT NULL,

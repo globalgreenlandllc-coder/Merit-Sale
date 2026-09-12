@@ -1,4 +1,5 @@
 'use client';
+import { isDemoPhoto } from '@/lib/photos';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { PropertyPhoto } from '@/lib/photos';
@@ -53,6 +54,7 @@ export function PhotoManager({ propertyId, photos: initial }: { propertyId: stri
                 </span>
               </div>
               {p.sha256 && <div className="truncate font-mono text-[10px] text-graphite" title={p.sha256}>sha256 {p.sha256.slice(0, 16)}…</div>}
+              {isDemoPhoto(p) && <div className="font-mono text-[10px] uppercase tracking-[0.14em] text-amber" title={p.credit}>Sample · removed in live mode</div>}
             </div>
           </li>
         ))}
