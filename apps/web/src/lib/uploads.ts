@@ -25,8 +25,9 @@ export async function storePhoto(propertyId: string, name: string, bytes: Buffer
   return `/api/uploads/${propertyId}/${name}`;
 }
 
-/** Removes a stored photo. Local paths are confined to the property's folder; blob URLs must be blob URLs. */
+/** Removes a stored photo. Local paths are confined to the property's folder; blob URLs must be blob URLs; linked external photographs have nothing to remove. */
 export async function removePhoto(propertyId: string, url: string): Promise<void> {
+  if (/^https?:\/\//.test(url) && !url.includes('.blob.vercel-storage.com/')) return;
   if (url.startsWith('https://') && url.includes('.blob.vercel-storage.com/')) {
     if (!usingBlob()) return;
     const { del } = await import('@vercel/blob');

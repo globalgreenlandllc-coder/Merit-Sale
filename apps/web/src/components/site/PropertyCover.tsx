@@ -27,7 +27,7 @@ export function PropertyCover({ p, width = 720, className = '', imgClassName = '
         <img src={photoSrc(cover.url, width)} alt={cover.caption ? `${p.name}: ${cover.caption}` : p.name} className={`size-full object-cover ${imgClassName}`} loading={eager ? 'eager' : 'lazy'} decoding="async" fetchPriority={eager ? 'high' : 'auto'} />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/55 to-transparent" aria-hidden />
         {count && photos.length > 1 && <span className={`${chip} bottom-2 left-2`}>{photos.length} photographs</span>}
-        {inset && geo && <span className="absolute bottom-2 right-2 border border-paper/70 shadow-[0_8px_20px_-8px_rgba(15,22,19,0.6)]" aria-hidden><MapThumb lat={p.latitude!} lng={p.longitude!} zoom={11} width={76} height={50} approximate={!owned} /></span>}
+        {inset && geo && <span className="absolute bottom-2 right-2 border border-paper/70 shadow-[0_8px_20px_-8px_rgba(15,22,19,0.6)]" aria-hidden><MapThumb lat={p.latitude!} lng={p.longitude!} zoom={11} width={76} height={50} approximate={!owned} attribution={false} /></span>}
       </figure>
     );
   }

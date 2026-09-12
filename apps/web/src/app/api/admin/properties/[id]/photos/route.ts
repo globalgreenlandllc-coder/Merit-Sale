@@ -9,6 +9,7 @@ import { removePhoto, storePhoto } from '@/lib/uploads';
 import { allPhotos, type PropertyPhoto } from '@/lib/photos';
 export type { PropertyPhoto } from '@/lib/photos';
 
+const LinkBody = z.object({ url: z.string().url().max(1000).refine((u) => u.startsWith('https://'), 'https only'), caption: z.string().max(200).default(''), credit: z.string().max(120).default('') });
 const ALLOWED = new Map([['image/jpeg', 'jpg'], ['image/png', 'png'], ['image/webp', 'webp'], ['image/avif', 'avif']]);
 const MAX_BYTES = 12 * 1024 * 1024;
 
@@ -23,12 +24,23 @@ async function photosOf(id: string) {
   return allPhotos(p);
 }
 
-/** Admin uploads property photography (multipart). Stored in Vercel Blob or under UPLOADS_DIR; never in `public`. */
+/** Admin uploads property photography (multipart) or links hosted photographs (JSON). Uploads go to Vercel Blob or UPLOADS_DIR; never `public`. */
 export const POST = guarded(async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const s = await assertRole(['admin']);
   const { id } = await params;
   const existing = await photosOf(id);
   if (!existing) return Response.json({ error: 'Property not found' }, { status: 404 });
+  if ((req.headers.get('content-type') ?? '').includes('application/json')) {
+    // link a photograph that is already hosted (the photographer's delivery, a CDN, or demo stock)
+    const parsed = LinkBody.safeParse(await req.json().catch(() => null));
+    if (!parsed.success) return Response.json({ error: 'Enter an https:// image URL' }, { status: 400 });
+    const { url, caption, credit } = parsed.data;
+    if (existing.some((p) => p.url === url)) return Response.json({ error: 'That photograph is already on the property' }, { status: 409 });
+    const next = [...existing, { url, caption, credit, addedAt: new Date().toISOString(), published: false }];
+    await db.property.update({ where: { id }, data: { photosJson: JSON.stringify(next) } });
+    await audit({ actorId: s.userId, actorRole: s.role, action: 'property.photos.add', objectType: 'Property', objectId: id, detail: { linked: url } });
+    return Response.json({ photos: next });
+  }
   const form = await req.formData();
   const caption = String(form.get('caption') ?? '').slice(0, 200);
   const credit = String(form.get('credit') ?? '').slice(0, 120);

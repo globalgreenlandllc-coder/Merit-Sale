@@ -4,8 +4,8 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Plate, SectionHeading } from '@/components/ui/Plate';
 import { Ledger } from '@/components/ui/Ledger';
 import { Stat } from '@/components/ui/Stat';
-import { FloorPlan } from '@/components/site/FloorPlan';
 import { MapThumb } from '@/components/site/MapThumb';
+import { PropertyCover } from '@/components/site/PropertyCover';
 import { OpenCard } from '@/components/site/OpenCard';
 import { FactsStrip } from '@/components/site/ListingSections';
 import { ParticipationMeter } from '@/components/site/Participation';
@@ -14,6 +14,7 @@ import { site } from '@/lib/site';
 import { featuredOpen, listOpens, openCounts } from '@/modules/meritopens/queries';
 import { db } from '@/lib/db';
 import { fmtDate, money, sqft } from '@/lib/format';
+import { photoSrc, publishedPhotos, toRoman } from '@/lib/photos';
 
 export const dynamic = 'force-dynamic';
 
@@ -38,11 +39,12 @@ export default async function HomePage() {
   ]);
   const counts = Object.fromEntries(await Promise.all(opens.map(async (o) => [o.id, await openCounts(o.id)] as const)));
   const p = featured?.property; const geo = !!p && typeof p.latitude === 'number' && typeof p.longitude === 'number'; const owned = p?.titleStatus === 'owned';
+  const photos = p && !featured?.isPractice ? publishedPhotos(p) : []; const cover = photos[0] ?? null; const strip = photos.slice(1, 5);
   return (
     <>
       {/* cover plate */}
       <section className="grain grain-dark bg-ink text-parchment">
-        <Container className="relative z-[2] grid items-center gap-12 py-16 lg:grid-cols-[minmax(0,1fr)_560px] lg:py-20">
+        <Container className="relative z-[2] grid grid-cols-[minmax(0,1fr)] items-center gap-12 py-16 lg:grid-cols-[minmax(0,1fr)_560px] lg:py-20">
           <div className="animate-rise">
             <div className="plate-dark">§ 01 · A merit sale · a new category of residential sale</div>
             <h1 className="font-display display-tight mt-8 text-[46px] leading-[0.98] sm:text-[64px] lg:text-[72px]">One registration. <br />One test. <br /><span className="display-wonk italic text-brass-2">The highest score</span> takes the keys.</h1>
@@ -58,18 +60,26 @@ export default async function HomePage() {
             </dl>
           </div>
           {featured && p && (
-            <Link href={`/opens/${featured.slug}`} aria-label={featured.isPractice ? `See ${featured.name}` : `See the listing: ${p.address}, ${p.city}, ${p.state}`} className="group relative block animate-rise" style={{ animationDelay: '0.15s' }}>
+            <Link href={`/opens/${featured.slug}`} aria-label={featured.isPractice ? `See ${featured.name}` : `See the listing: ${p.address}, ${p.city}, ${p.state}`} className="group relative block min-w-0 animate-rise" style={{ animationDelay: '0.15s' }}>
               <div className="plate-frame-dark" aria-hidden>
-                <div className="relative bg-ink-2 text-brass-2" style={{ aspectRatio: '3 / 2' }}>
-                  <div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(210,180,122,0.12),transparent_60%)]" aria-hidden />
-                  {featured.isPractice ? <div className="relative z-[2] flex size-full items-center justify-center p-8 text-center"><span className="font-display text-[30px] leading-tight text-parchment">Practice Merit Open · {money(featured.cashComponentCents)} award</span></div> : p.planSetKey ? <div className="relative z-[2] size-full p-6 sm:p-8"><FloorPlan className="size-full" animate /></div> : <div className="relative z-[2] flex size-full items-center justify-center p-8 text-center"><span className="font-display text-[26px] leading-tight text-parchment">Plans published when the builder’s plans are approved</span></div>}
-                </div>
-                <div className="flex items-baseline justify-between gap-6 border-t border-brass-2/20 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-mist"><span className="shrink-0 whitespace-nowrap">Plate I · {featured.isPractice ? 'Practice' : p.planSetKey ? 'Main-level plan' : 'Plans pending'}</span><span className="truncate text-mist/80">{featured.isPractice ? 'Online' : `${p.city}, ${p.state}`}</span></div>
+                {featured.isPractice
+                  ? <div className="grain grain-dark relative flex aspect-[3/2] items-center justify-center bg-ink-2 p-8 text-center"><div className="absolute inset-0 bg-[radial-gradient(120%_80%_at_50%_0%,rgba(210,180,122,0.12),transparent_60%)]" aria-hidden /><span className="relative z-[2] font-display text-[30px] leading-tight text-parchment">Practice Merit Open · {money(featured.cashComponentCents)} award</span></div>
+                  : <PropertyCover p={p} width={1200} eager className="aspect-[3/2]" imgClassName="transition-transform duration-[1400ms] ease-out group-hover:scale-[1.03]" pendingLabel="Photography pending · vicinity" />}
+                {strip.length > 0 && (
+                  <div className="grid grid-cols-4 gap-1.5 pt-1.5">
+                    {strip.map((ph, i) => (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img key={ph.url} src={photoSrc(ph.url, 320)} alt="" className="aspect-[3/2] w-full object-cover opacity-90 transition group-hover:opacity-100" loading="lazy" decoding="async" style={{ transitionDelay: `${i * 40}ms` }} />
+                    ))}
+                    {strip.length < 4 && geo && strip.length === 3 && <MapThumb lat={p.latitude!} lng={p.longitude!} zoom={12} fill approximate={!owned} className="aspect-[3/2] !w-full" />}
+                  </div>
+                )}
+                <div className="flex items-baseline justify-between gap-6 border-t border-brass-2/20 px-3 py-2 font-mono text-[11px] uppercase tracking-[0.18em] text-mist"><span className="min-w-0 truncate">{featured.isPractice ? 'Practice · online' : cover ? `Photograph ${toRoman(1)} of ${photos.length} · ${cover.caption || p.name}` : `Vicinity · photography pending`}</span><span className="hidden shrink-0 whitespace-nowrap text-mist/80 sm:inline">{featured.isPractice ? 'Online' : `${p.city}, ${p.state}`}</span></div>
               </div>
               {!featured.isPractice && (
                 <div className="mt-3 grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 border-t hair-light pt-4" aria-hidden>
                   <div className="min-w-0"><div className="font-display text-[24px] leading-tight text-parchment group-hover:underline decoration-brass-2 decoration-1 underline-offset-4">{p.address}</div><div className="mt-1 text-[13px] text-mist">{p.city}, {p.county ? `${p.county} County, ` : ''}{p.state} · {[p.beds != null && `${p.beds} bd`, p.baths != null && `${p.baths} ba`, p.sqft && sqft(p.sqft), p.yearBuilt && `built ${p.yearBuilt}`].filter(Boolean).join(' · ')}</div><div className="mt-2 text-[13px] text-sage">Prize package: the home plus {money(featured.cashComponentCents, { compact: true })} cash toward taxes · registration {money(featured.registrationFeeCents)} · closes {fmtDate(featured.registrationCloseAt)}</div></div>
-                  {geo && <MapThumb lat={p.latitude!} lng={p.longitude!} zoom={11} width={150} height={96} approximate={!owned} className="border border-brass-2/30" />}
+                  {geo && cover && <MapThumb lat={p.latitude!} lng={p.longitude!} zoom={11} width={150} height={96} approximate={!owned} className="border border-brass-2/30" />}
                 </div>
               )}
             </Link>
@@ -132,7 +142,7 @@ export default async function HomePage() {
         <dl className="border-t hair">{faqs.map(([q, a]) => <div key={q} className="grid gap-2 border-b hair py-5 sm:grid-cols-[minmax(0,15rem)_1fr] sm:gap-6"><dt className="font-display text-[19px] leading-snug">{q}</dt><dd className="text-[15px] leading-relaxed text-slate">{a}</dd></div>)}</dl>
       </Container></section>
 
-      <Container><div className="folio border-t border-b-0 py-4"><span>Plates schematic from builder plans, not to scale · Map tiles © Esri; OpenStreetMap fallback © OpenStreetMap contributors · Fraunces, Instrument Sans, JetBrains Mono</span><span className="hidden sm:inline">Earn the Keys</span></div></Container>
+      <Container><div className="folio border-t border-b-0 py-4"><span>Photographs credited on each listing · Plates schematic from builder plans, not to scale · Map tiles © Esri; OpenStreetMap fallback © OpenStreetMap contributors · Fraunces, Instrument Sans, JetBrains Mono</span><span className="hidden sm:inline">Earn the Keys</span></div></Container>
     </>
   );
 }

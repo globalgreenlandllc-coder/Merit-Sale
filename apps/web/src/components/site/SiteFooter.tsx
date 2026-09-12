@@ -40,6 +40,7 @@ export function SiteFooter() {
         <div className="mt-14 border-t hair-light pt-6 text-[12.5px] leading-relaxed text-sage">
           <p>{site.disclosureLine}</p>
           <p className="mt-2">{site.claimsLine}</p>
+          <p className="mt-2 text-sage/80">Photographs are credited on each listing. Map tiles © Esri; OpenStreetMap fallback © OpenStreetMap contributors.</p>
         </div>
       </Container>
     </footer>

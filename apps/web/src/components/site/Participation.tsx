@@ -12,8 +12,9 @@ export function participation(open: OpenFull, counts: ParticipationCounts) {
   const now = reservationPhase ? counts.reservations : counts.registrations;
   const target = reservationPhase ? open.reservationTarget : (open.registrationTarget ?? open.reservationTarget);
   const label = reservationPhase ? 'On the reservation list' : 'Registered';
+  const shortLabel = reservationPhase ? 'Reservations' : 'Registered';
   const pct = target ? Math.min(100, Math.round((now / target) * 100)) : null;
-  return { now, target, label, pct, show: open.showReservationCount };
+  return { now, target, label, shortLabel, pct, show: open.showReservationCount };
 }
 
 export function ParticipationMeter({ open, counts, dark = false, compact = false }: { open: OpenFull; counts: ParticipationCounts; dark?: boolean; compact?: boolean }) {

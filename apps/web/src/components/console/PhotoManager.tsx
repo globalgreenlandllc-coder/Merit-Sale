@@ -29,7 +29,13 @@ export function PhotoManager({ propertyId, photos: initial }: { propertyId: stri
         <input name="credit" placeholder="Photographer credit" className="field py-2 text-[13px]" />
         <Button type="submit" size="sm" disabled={busy}>{busy ? 'Working…' : 'Upload'}</Button>
       </form>
-      <p className="text-[12.5px] text-graphite">JPEG, PNG, WebP, or AVIF up to 12 MB each. Uploads stay unpublished until marked published after counsel approval; only published photographs appear on the public page. The first published photo is the cover.</p>
+      <form className="grid gap-3 sm:grid-cols-[1.4fr_1fr_1fr_auto]" onSubmit={async (e) => { e.preventDefault(); const form = e.currentTarget; const fd = new FormData(form); await call({ method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ url: String(fd.get('url') ?? '').trim(), caption: String(fd.get('caption') ?? ''), credit: String(fd.get('credit') ?? '') }) }); form.reset(); }}>
+        <input name="url" type="url" required placeholder="…or link a hosted photograph: https://" className="field py-2 text-[13px]" />
+        <input name="caption" placeholder="Caption" className="field py-2 text-[13px]" />
+        <input name="credit" placeholder="Photographer credit" className="field py-2 text-[13px]" />
+        <Button type="submit" size="sm" variant="secondary" disabled={busy}>{busy ? 'Working…' : 'Link'}</Button>
+      </form>
+      <p className="text-[12.5px] text-graphite">JPEG, PNG, WebP, or AVIF up to 12 MB each, or a link to a photograph already hosted (the photographer’s delivery or a CDN). New photographs stay unpublished until marked published after counsel approval; only published photographs appear on public pages. The first published photograph is the cover on the listing, the catalogue card, and the landing page.</p>
       {error && <p className="text-[13px] text-clay" role="alert">{error}</p>}
       <ul className="grid gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {photos.map((p, i) => (
@@ -50,7 +56,7 @@ export function PhotoManager({ propertyId, photos: initial }: { propertyId: stri
             </div>
           </li>
         ))}
-        {!photos.length && <li className="col-span-full rounded-sm border border-dashed hair-strong p-6 text-center text-[13px] text-graphite">No photography yet. The public page shows the architect’s plate set until photographs are published.</li>}
+        {!photos.length && <li className="col-span-full rounded-sm border border-dashed hair-strong p-6 text-center text-[13px] text-graphite">No photography yet. Public pages show the vicinity map until photographs are published; the architect’s plates stay in the listing’s plate viewer.</li>}
       </ul>
     </div>
   );

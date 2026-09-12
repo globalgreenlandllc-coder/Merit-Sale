@@ -33,7 +33,7 @@ export function OpenCard({ open, counts }: { open: OpenFull; counts?: Participat
       <dl className="grid grid-cols-2 gap-x-6 gap-y-3 self-center border-t hair pt-4 text-[14px] sm:col-span-2 lg:col-span-1 lg:border-t-0 lg:pt-0">
         <div><dt className="plate">Registration</dt><dd className="mt-0.5">{open.registrationFeeCents === 0 ? 'Free' : money(open.registrationFeeCents)}</dd></div>
         <div><dt className="plate">{open.isPractice ? 'Award' : 'Cash component'}</dt><dd className="mt-0.5">{money(open.cashComponentCents, { compact: true })}</dd></div>
-        {part?.show ? <div><dt className="plate">{part.label}</dt><dd className="mt-0.5 tabular">{part.now.toLocaleString()}{part.target ? <span className="text-graphite"> / {part.target.toLocaleString()}</span> : null}</dd></div> : <div><dt className="plate">Closes</dt><dd className="mt-0.5">{open.rulesHash ? fmtDate(open.registrationCloseAt) : `[${fmtDate(open.registrationCloseAt)}]`}</dd></div>}
+        {part?.show ? <div><dt className="plate">{part.shortLabel}</dt><dd className="mt-0.5 tabular">{part.now.toLocaleString()}{part.target ? <span className="text-graphite"> / {part.target.toLocaleString()}</span> : null}</dd></div> : <div><dt className="plate">Closes</dt><dd className="mt-0.5">{open.rulesHash ? fmtDate(open.registrationCloseAt) : `[${fmtDate(open.registrationCloseAt)}]`}</dd></div>}
         <div><dt className="plate">Rules hash</dt><dd className="mt-0.5 font-mono text-[12px] text-ink-3">{open.rulesHash ? `${open.rulesHash.slice(0, 12)}…` : 'hashed at lock'}</dd></div>
       </dl>
     </Link>

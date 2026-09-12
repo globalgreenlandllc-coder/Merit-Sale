@@ -2,7 +2,7 @@
  * Static map thumbnail with no JavaScript: nine raster tiles positioned so the
  * coordinate sits at the exact centre, then a pin overlaid. Used on cards.
  */
-export function MapThumb({ lat, lng, zoom = 13, width = 320, height = 200, approximate = false, fill = false, className = '' }: { lat: number; lng: number; zoom?: number; width?: number; height?: number; approximate?: boolean; fill?: boolean; className?: string }) {
+export function MapThumb({ lat, lng, zoom = 13, width = 320, height = 200, approximate = false, fill = false, attribution = true, className = '' }: { lat: number; lng: number; zoom?: number; width?: number; height?: number; approximate?: boolean; fill?: boolean; /** hide the tile credit on tiny insets; the page footer carries it */ attribution?: boolean; className?: string }) {
   const n = 2 ** zoom;
   const xf = ((lng + 180) / 360) * n;
   const latR = (lat * Math.PI) / 180;
@@ -24,7 +24,7 @@ export function MapThumb({ lat, lng, zoom = 13, width = 320, height = 200, appro
       ) : (
         <span className="etk-pin absolute" style={{ left: 'calc(50% - 14px)', top: 'calc(50% - 14px)' }}><span className="etk-pin-ring" /><span className="etk-pin-dot" /></span>
       )}
-      <span className="absolute bottom-1 right-1.5 rounded-xs bg-paper/70 px-1 font-mono text-[8px] leading-3 text-graphite">Tiles © Esri</span>
+      {attribution && <span className="absolute bottom-1 right-1.5 rounded-xs bg-paper/70 px-1 font-mono text-[8px] leading-3 text-graphite">Tiles © Esri</span>}
     </div>
   );
 }

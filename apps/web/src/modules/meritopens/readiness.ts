@@ -25,7 +25,7 @@ export async function readiness(open: OpenFull): Promise<Readiness> {
     add('facts', 'Core facts entered', !!(p.beds && p.baths && p.sqft && p.yearBuilt), 'Beds, baths, interior area, and year built.', prop, 'admin');
     add('title', 'Title recorded and linked', p.titleStatus === 'owned' && !!p.countyRecorderUrl && !isPlaceholder(p.speEntityName), p.titleStatus === 'owned' ? 'Add the county recorder link and the SPE name.' : `Title is ${p.titleStatus.replace(/_/g, ' ')}; registration needs owned title or an Administrator override.`, prop, 'admin');
     add('appraisal', 'Appraisal on file', !!p.appraisedValueCents && !!p.appraisalDate && !isPlaceholder(p.appraiserName) && !!p.appraisalReportUrl, 'Value, date, appraiser, and a report link.', prop, 'admin');
-    add('photos', 'Photography published', photos.length > 0, photos.length ? `${photos.length} published.` : 'Upload and mark photos published after counsel approval; the plate set stands in until then.', prop, 'counsel');
+    add('photos', 'Photography published', photos.length > 0, photos.length ? `${photos.length} published.` : 'Upload and mark photos published after counsel approval; the vicinity map stands in on cards and the cover until then.', prop, 'counsel');
     add('plans', 'Plate set assigned', !!p.planSetKey, 'Floor plan, site plan, and elevation, or leave pending.', prop, 'admin');
     add('approved', 'Neighborhood and nearby claims approved', !!p.factsApprovedAt && !!p.description, 'Counsel approves the factual claims; until then they render as pending.', prop, 'counsel');
     add('costs', 'Cost to hold entered', p.taxAnnualCents !== null && p.insuranceAnnualCents !== null, 'Property tax and insurance estimates with sources.', prop, 'admin');
