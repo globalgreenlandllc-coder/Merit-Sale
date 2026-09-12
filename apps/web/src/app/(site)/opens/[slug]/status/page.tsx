@@ -31,7 +31,7 @@ export default async function StatusPage({ params }: { params: Promise<{ slug: s
       </div>
       <div className="mt-8 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Stage" value={<span className="text-[22px] capitalize">{open.status.replace(/_/g, ' ')}</span>} hint={next} />
-        <Stat label="Registered" value={(counts.registrations ?? 0).toLocaleString()} hint={counts.reservations ? `${counts.reservations.toLocaleString()} reservations` : undefined} />
+        <Stat label={open.status === 'reservation' ? 'On the reservation list' : 'Registered'} value={<span className="tabular">{(open.status === 'reservation' ? counts.reservations ?? 0 : counts.registrations ?? 0).toLocaleString()}{(open.status === 'reservation' ? open.reservationTarget : open.registrationTarget ?? open.reservationTarget) && open.showReservationCount ? <span className="text-[16px] text-graphite"> / {(open.status === 'reservation' ? open.reservationTarget : open.registrationTarget ?? open.reservationTarget)!.toLocaleString()}</span> : null}</span>} hint="A pro forma target, not a condition: the event runs on its dates regardless (Rules 12.2)." />
         <Stat label="Qualified · advanced" value={<span className="text-[22px]">{[counts.r1Passed, counts.r2Advanced, counts.r3Advanced].map((v) => (v === undefined ? '—' : v.toLocaleString())).join(' · ')}</span>} hint="R1 · R2 · R3, from certified lists only" />
         <Stat label="Certifications" value={open.certifications.length} hint={<Link href="/registry" className="link-rule">hashes in the registry</Link>} />
       </div>

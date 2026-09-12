@@ -107,6 +107,7 @@ CREATE TABLE "MeritOpen" (
     "registrationFeeCents" INTEGER NOT NULL,
     "cashComponentCents" INTEGER NOT NULL,
     "reservationTarget" INTEGER,
+    "registrationTarget" INTEGER,
     "showReservationCount" BOOLEAN NOT NULL DEFAULT true,
     "registrationOpenAt" TIMESTAMP(3),
     "registrationCloseAt" TIMESTAMP(3),

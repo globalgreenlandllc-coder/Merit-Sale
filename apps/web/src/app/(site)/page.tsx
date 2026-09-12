@@ -8,9 +8,10 @@ import { FloorPlan } from '@/components/site/FloorPlan';
 import { MapThumb } from '@/components/site/MapThumb';
 import { OpenCard } from '@/components/site/OpenCard';
 import { FactsStrip } from '@/components/site/ListingSections';
+import { ParticipationMeter } from '@/components/site/Participation';
 import { Placeholder } from '@/components/ui/Placeholder';
 import { site } from '@/lib/site';
-import { featuredOpen, listOpens } from '@/modules/meritopens/queries';
+import { featuredOpen, listOpens, openCounts } from '@/modules/meritopens/queries';
 import { db } from '@/lib/db';
 import { fmtDate, money, sqft } from '@/lib/format';
 
@@ -35,6 +36,7 @@ export default async function HomePage() {
   const [featured, opens, hashes, certs, released, complete] = await Promise.all([
     featuredOpen(), listOpens(), db.form.count({ where: { hashPublishedAt: { not: null } } }), db.certification.count(), db.form.count({ where: { packageReleasedAt: { not: null } } }), db.meritOpen.count({ where: { status: 'complete' } }),
   ]);
+  const counts = Object.fromEntries(await Promise.all(opens.map(async (o) => [o.id, await openCounts(o.id)] as const)));
   const p = featured?.property; const geo = !!p && typeof p.latitude === 'number' && typeof p.longitude === 'number'; const owned = p?.titleStatus === 'owned';
   return (
     <>
@@ -86,6 +88,7 @@ export default async function HomePage() {
             <dl className="mt-6 grid grid-cols-2 gap-x-8 gap-y-3 text-[14px] sm:grid-cols-4">
               <div><dt className="plate">Registration</dt><dd className="mt-0.5">{money(featured.registrationFeeCents)}</dd></div><div><dt className="plate">Cash component</dt><dd className="mt-0.5">{money(featured.cashComponentCents, { compact: true })}</dd></div><div><dt className="plate">Closes</dt><dd className="mt-0.5">{fmtDate(featured.registrationCloseAt)}</dd></div><div><dt className="plate">Rules hash</dt><dd className="mt-0.5 font-mono text-[12px]">{featured.rulesHash ? `${featured.rulesHash.slice(0, 12)}…` : 'pending lock'}</dd></div>
             </dl>
+            {counts[featured.id] && <div className="mt-6 max-w-sm"><ParticipationMeter open={featured} counts={counts[featured.id]!} compact /></div>}
             <div className="mt-7 flex flex-wrap gap-3"><ButtonLink href={`/opens/${featured.slug}`} size="lg">See the listing</ButtonLink><ButtonLink href={`/opens/${featured.slug}/rules`} variant="secondary" size="lg">Official Rules</ButtonLink></div>
           </div>
           {geo && <div className="plate-frame self-start"><MapThumb lat={p.latitude!} lng={p.longitude!} zoom={11} width={306} height={230} approximate={!owned} className="!w-full" /><div className="px-2 py-1.5 font-mono text-[10px] uppercase tracking-[0.14em] text-graphite">Vicinity · {p.city}, {p.state}</div></div>}
@@ -121,7 +124,7 @@ export default async function HomePage() {
 
       <section className="border-t hair bg-parchment/60"><Container className="py-20">
         <SectionHeading index="§ 06" label="The catalogue" title="Every Merit Open, past and present." lede="Completed events keep their public audit summary and released answer keys online permanently." />
-        <div className="mt-10">{opens.map((o) => <OpenCard key={o.id} open={o} />)}{!opens.length && <p className="text-slate">No Merit Opens have been published yet.</p>}</div>
+        <div className="mt-10">{opens.map((o) => <OpenCard key={o.id} open={o} counts={counts[o.id]} />)}{!opens.length && <p className="text-slate">No Merit Opens have been published yet.</p>}</div>
       </Container></section>
 
       <section><Container className="grid gap-12 py-20 lg:grid-cols-[0.8fr_1.2fr]">

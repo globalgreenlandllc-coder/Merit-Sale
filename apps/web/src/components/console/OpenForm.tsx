@@ -29,8 +29,8 @@ export function OpenForm({ o, properties }: { o: MeritOpen | null; properties: P
           <FieldRow label="First-access hours" htmlFor="firstAccessHours"><Input id="firstAccessHours" name="firstAccessHours" type="number" defaultValue={o?.firstAccessHours ?? 72} /></FieldRow>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          <FieldRow label="Reservation target" htmlFor="reservationTarget"><Input id="reservationTarget" name="reservationTarget" type="number" defaultValue={o?.reservationTarget ?? ''} /></FieldRow>
-          <div className="space-y-3 pt-6"><Checkbox name="showReservationCount" defaultChecked={o?.showReservationCount ?? true} label="Show live reservation count" /><Checkbox name="isPractice" defaultChecked={o?.isPractice ?? false} label="Practice event (cash award, no property)" /></div>
+          <div className="grid grid-cols-2 gap-3"><FieldRow label="Reservation target" htmlFor="reservationTarget"><Input id="reservationTarget" name="reservationTarget" type="number" defaultValue={o?.reservationTarget ?? ''} /></FieldRow><FieldRow label="Registration target" htmlFor="registrationTarget" hint="Pro forma figure; never a condition."><Input id="registrationTarget" name="registrationTarget" type="number" defaultValue={o?.registrationTarget ?? ''} /></FieldRow></div>
+          <div className="space-y-3 pt-6"><Checkbox name="showReservationCount" defaultChecked={o?.showReservationCount ?? true} label="Show participation counts publicly" /><Checkbox name="isPractice" defaultChecked={o?.isPractice ?? false} label="Practice event (cash award, no property)" /></div>
         </div>
       </fieldset>
       <div className="md:col-span-2">{locked ? <p className="text-[13.5px] text-clay">Locked {o!.lockedAt!.toISOString()} by the Administrator. Configuration is immutable (Rules 13).</p> : <Button type="submit">Save Merit Open</Button>}</div>

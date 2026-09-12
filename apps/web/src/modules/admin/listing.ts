@@ -48,7 +48,7 @@ export async function createListingAction(formData: FormData) {
   const seq = (await db.meritOpen.count({ where: { listingNo: { startsWith: `ETK-${year}-` } } })) + 1;
   const open = await db.meritOpen.create({ data: {
     slug: openSlug, name: openName, city, propertyId: property.id, listingNo: `ETK-${year}-${String(seq).padStart(3, '0')}`,
-    stateEligibilityJson: JSON.stringify(states), registrationFeeCents: fee, cashComponentCents: cash, reservationTarget: num(formData, 'reservationTarget'),
+    stateEligibilityJson: JSON.stringify(states), registrationFeeCents: fee, cashComponentCents: cash, reservationTarget: num(formData, 'reservationTarget'), registrationTarget: num(formData, 'registrationTarget') ?? num(formData, 'reservationTarget'),
     registrationOpenAt: openAt, registrationCloseAt: closeAt, firstAccessHours: 72, advanceN: N, advanceM: M, status: 'draft',
   } });
 

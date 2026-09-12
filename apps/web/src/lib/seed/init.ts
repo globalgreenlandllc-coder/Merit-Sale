@@ -8,10 +8,13 @@ export async function tablesExist(db: PrismaClient): Promise<boolean> {
   try { await db.$queryRawUnsafe('SELECT 1 FROM "MeritOpen" LIMIT 1'); return true; } catch { return false; }
 }
 
-function ddlStatements(): string[] {
-  const sql = readFileSync(join(process.cwd(), 'prisma', 'sql', 'init.postgresql.sql'), 'utf8');
+function statementsOf(file: string): string[] {
+  const sql = readFileSync(join(process.cwd(), 'prisma', 'sql', file), 'utf8');
   return sql.split(/;\s*\n/).map((s) => s.replace(/^\s*--.*$/gm, '').trim()).filter((s) => s.length > 0);
 }
+const ddlStatements = () => statementsOf('init.postgresql.sql');
+/** Column additions and other idempotent follow-ups for databases created before a schema change. */
+const updateStatements = () => statementsOf('updates.postgresql.sql');
 
 /**
  * Initialise an EMPTY PostgreSQL database: create every table from the checked-in DDL,
@@ -36,7 +39,7 @@ const DUPLICATE_CODES = new Set(['42P07', '42710', '42P06', '42701', '23505']);
  */
 export async function ensureSchema(db: PrismaClient): Promise<{ applied: number; skipped: number; failed: string[] }> {
   let applied = 0, skipped = 0; const failed: string[] = [];
-  for (const st of ddlStatements()) {
+  for (const st of [...ddlStatements(), ...updateStatements()]) {
     try { await db.$executeRawUnsafe(st); applied++; }
     catch (e) {
       const code = (e as { meta?: { code?: string } })?.meta?.code ?? (e as { code?: string })?.code ?? '';

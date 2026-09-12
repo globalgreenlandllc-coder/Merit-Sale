@@ -4,9 +4,10 @@ import { ButtonLink } from '@/components/ui/Button';
 import { Hash } from '@/components/ui/Hash';
 import { fmtDocket, money } from '@/lib/format';
 import type { OpenFull } from '@/modules/meritopens/queries';
+import { ParticipationMeter, type ParticipationCounts } from './Participation';
 
 /** The docket: fixed facts and the one action, in the idiom of a court docket rather than a pricing card. */
-export function Docket({ open, myReg, custodian, listingNo, states, inline = false }: { open: OpenFull; myReg: Registration | null; custodian: Vendor | undefined; listingNo: string; states: string[]; inline?: boolean }) {
+export function Docket({ open, myReg, custodian, listingNo, states, counts, inline = false }: { open: OpenFull; myReg: Registration | null; custodian: Vendor | undefined; listingNo: string; states: string[]; counts?: ParticipationCounts; inline?: boolean }) {
   const p = open.property;
   const r1 = open.rounds.find((r) => r.number === 'r1'); const fin = open.rounds.find((r) => r.number === 'final');
   const registering = open.status === 'registration'; const reservation = open.status === 'reservation'; const locked = !!open.rulesHash;
@@ -31,6 +32,7 @@ export function Docket({ open, myReg, custodian, listingNo, states, inline = fal
     <div id={inline ? 'docket-inline' : undefined} className="border-y hair bg-paper py-5 lg:border lg:px-6">
       <div className="flex items-baseline justify-between"><span className="plate">Docket</span><span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-graphite">{listingNo}</span></div>
       <div className="mt-3 flex items-baseline gap-3"><span className="font-display tabular text-[40px] leading-none">{open.registrationFeeCents ? money(open.registrationFeeCents) : 'Free'}</span><span className="text-[13px] leading-snug text-slate">one registration<br />per person</span></div>
+      {counts && <div className="mt-4 border-t hair pt-3"><ParticipationMeter open={open} counts={counts} compact /></div>}
       <dl className="mt-4 border-t hair">
         {rows.map(([k, v]) => <div key={k} className="grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 border-b hair py-2 text-[13px]"><dt className="plate whitespace-nowrap pt-0.5">{k}</dt><dd className="min-w-0 text-ink">{v}</dd></div>)}
       </dl>

@@ -22,6 +22,7 @@ import { ScheduleTimeline } from '@/components/site/ScheduleTimeline';
 import { HashVerifier } from '@/components/site/HashVerifier';
 import { DistancesLedger, FactSheet, FactsStrip, NearbyList, OwnershipCosts, PropertyRecord, TitleLedger } from '@/components/site/ListingSections';
 import { StageTracker } from '@/components/site/StageTracker';
+import { ParticipationMeter, participation } from '@/components/site/Participation';
 import { myStage, stageCounts } from '@/modules/meritopens/status';
 import type { PropertyPhoto } from '@/app/api/admin/properties/[id]/photos/route';
 import { db } from '@/lib/db';
@@ -88,7 +89,8 @@ export default async function OpenPage({ params }: { params: Promise<{ slug: str
     ...open.rounds.filter((r) => !r.number.startsWith('tiebreak')).map((r) => ({ key: r.id, label: `${roundLabel(r.number)} · ${r.durationSeconds === 60 ? '60 seconds' : fmtDuration(r.durationSeconds)}`, start: (r.windowStart ?? r.scheduledAt)?.toISOString() ?? null, end: r.windowEnd?.toISOString() ?? null, tier: r.integrityTier, note: r.windowStart ? 'Choose any start time inside the window; one attempt.' : 'Single synchronised session; all clients unlock at server time.' })),
   ];
   const disclosures = (cfg?.disclosures ?? []).filter((d) => states.includes(d.jurisdiction));
-  const docket = (inline: boolean) => <Docket open={open} myReg={myReg} custodian={vendor('custodian')} listingNo={listingNo} states={states} inline={inline} />;
+  const docket = (inline: boolean) => <Docket open={open} myReg={myReg} custodian={vendor('custodian')} listingNo={listingNo} states={states} counts={counts} inline={inline} />;
+  const part = participation(open, counts);
   const aside = <aside className="self-start lg:sticky lg:top-20 lg:max-h-[calc(100dvh-5.5rem)] lg:overflow-y-auto lg:overscroll-contain"><div className="lg:hidden">{docket(true)}</div><div className="hidden lg:block">{docket(false)}</div></aside>;
   const sec = 'scroll-mt-24';
   let n = 0; const idx = () => `§ ${String(++n).padStart(2, '0')}`;
@@ -114,7 +116,8 @@ export default async function OpenPage({ params }: { params: Promise<{ slug: str
               <ButtonLink href={`/opens/${slug}/rules`} variant="ghost" size="lg" className="text-parchment hover:bg-paper/10">Official Rules</ButtonLink>
             </div>
             {registering && <p className="mt-5 text-[13px] leading-relaxed text-sage">Registration closes <span className="text-parchment">{fmtDateTime(open.registrationCloseAt)}</span>. Round 1 begins {fmtDate(r1?.windowStart)}. The Merit Open runs on these dates no matter how many people register.</p>}
-            {reservation && <p className="mt-5 text-[13px] leading-relaxed text-sage">Free and non-binding. Nothing is awarded at this stage; paid registration opens only after the platform owns the home.{open.showReservationCount && <> Reservations on file: <span className="text-parchment">{counts.reservations.toLocaleString()}</span>.</>}</p>}
+            {reservation && <p className="mt-5 text-[13px] leading-relaxed text-sage">Free and non-binding. Nothing is awarded at this stage; paid registration opens only after the platform owns the home.</p>}
+            {part.show && <div className="mt-6 max-w-sm"><ParticipationMeter open={open} counts={counts} dark /></div>}
           </div>
         </Container>
       </section>

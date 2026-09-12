@@ -57,7 +57,7 @@ export async function saveMeritOpenAction(formData: FormData) {
     name, slug: str(formData, 'slug') || slugify(name), propertyId, city: str(formData, 'city'), isPractice: formData.get('isPractice') === 'on',
     stateEligibilityJson: JSON.stringify(str(formData, 'eligibleStates').split(',').map((x) => x.trim().toUpperCase()).filter(Boolean)),
     registrationFeeCents: Math.round((num(formData, 'registrationFee') ?? 0) * 100), cashComponentCents: Math.round((num(formData, 'cashComponent') ?? 0) * 100),
-    reservationTarget: num(formData, 'reservationTarget'), showReservationCount: formData.get('showReservationCount') === 'on',
+    reservationTarget: num(formData, 'reservationTarget'), registrationTarget: num(formData, 'registrationTarget'), showReservationCount: formData.get('showReservationCount') === 'on',
     registrationOpenAt: date(formData, 'registrationOpenAt'), registrationCloseAt: date(formData, 'registrationCloseAt'), firstAccessHours: num(formData, 'firstAccessHours') ?? 72,
     advanceN: num(formData, 'advanceN') ?? 2000, advanceM: num(formData, 'advanceM') ?? 100,
   };

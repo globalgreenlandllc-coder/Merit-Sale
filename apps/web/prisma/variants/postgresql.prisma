@@ -130,6 +130,8 @@ model MeritOpen {
   registrationFeeCents      Int
   cashComponentCents        Int
   reservationTarget         Int?
+  /// pro forma registration target; shown as a neutral participation figure, never a condition (Rules 12.2)
+  registrationTarget        Int?
   showReservationCount      Boolean  @default(true)
   registrationOpenAt        DateTime?
   registrationCloseAt       DateTime?

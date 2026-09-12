@@ -4,9 +4,11 @@ import { FloorPlan } from './FloorPlan';
 import { MapThumb } from './MapThumb';
 import { fmtDate, money, sqft } from '@/lib/format';
 import type { OpenFull } from '@/modules/meritopens/queries';
+import { participation, type ParticipationCounts } from './Participation';
 
 /** Catalogue row: plan thumbnail, map thumbnail, the listing line, and the four docket facts. */
-export function OpenCard({ open }: { open: OpenFull }) {
+export function OpenCard({ open, counts }: { open: OpenFull; counts?: ParticipationCounts }) {
+  const part = counts ? participation(open, counts) : null;
   const p = open.property; const geo = typeof p.latitude === 'number' && typeof p.longitude === 'number'; const owned = p.titleStatus === 'owned';
   const titleVerified = owned && !!p.countyRecorderUrl && !!p.speEntityName && !p.speEntityName.startsWith('[');
   const facts = [p.beds != null && `${p.beds} bd`, p.baths != null && `${p.baths} ba`, p.sqft && sqft(p.sqft), p.yearBuilt].filter(Boolean).join(' · ');
@@ -28,7 +30,7 @@ export function OpenCard({ open }: { open: OpenFull }) {
       <dl className="grid grid-cols-2 gap-x-6 gap-y-3 self-center text-[14px] sm:col-span-2 lg:col-span-1">
         <div><dt className="plate">Registration</dt><dd className="mt-0.5">{open.registrationFeeCents === 0 ? 'Free' : money(open.registrationFeeCents)}</dd></div>
         <div><dt className="plate">{open.isPractice ? 'Award' : 'Cash component'}</dt><dd className="mt-0.5">{money(open.cashComponentCents, { compact: true })}</dd></div>
-        <div><dt className="plate">Closes</dt><dd className="mt-0.5">{open.rulesHash ? fmtDate(open.registrationCloseAt) : `[${fmtDate(open.registrationCloseAt)}]`}</dd></div>
+        {part?.show ? <div><dt className="plate">{part.label}</dt><dd className="mt-0.5 tabular">{part.now.toLocaleString()}{part.target ? <span className="text-graphite"> / {part.target.toLocaleString()}</span> : null}</dd></div> : <div><dt className="plate">Closes</dt><dd className="mt-0.5">{open.rulesHash ? fmtDate(open.registrationCloseAt) : `[${fmtDate(open.registrationCloseAt)}]`}</dd></div>}
         <div><dt className="plate">Rules hash</dt><dd className="mt-0.5 font-mono text-[12px] text-ink-3">{open.rulesHash ? `${open.rulesHash.slice(0, 12)}…` : 'hashed at lock'}</dd></div>
       </dl>
     </Link>
